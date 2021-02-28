@@ -1,15 +1,32 @@
 # vShell
 
-> vShell is an example of how Android terminal apps can look like after
-> Google enforces its execve() lockdown: https://github.com/termux/termux-app/issues/1072
-
-> vShell is a fork of Termux application but is not its replacement.
-
 vShell is a virtual shell environment application for the Android OS. It
 provides a virtual machine running small Linux distribution ready for the
 use out-of-box.
 
-Here are some details on the virtual machine configuration:
+Application implements my view on how Linux terminal environments can look
+like on Android OS. As operating system security is getting more and more
+hardened over time (which is good btw), it become impossible to abuse design
+flaws such as executable user data to run Linux native executables. See
+this issue for example: https://github.com/termux/termux-app/issues/1072.
+
+Ability to execute user downloaded executable code on internal storage has
+been a vital part of Termux application. Now it has been taken out and
+Termux has to use Android 9 SDK (API level 28) in order to work on Android
+10 and higher. However this issue is not a problem for the vShell application
+which does not run executable code directly. Instead of just executing
+binaries placed to internal storage, it uses [QEMU](https://www.qemu.org/)
+emulator to run the [Alpine Linux](https://alpinelinux.org/) distribution.
+Thus it is quite similar to [iSH](https://github.com/ish-app/ish) application
+for Apple IOS devices. However vShell uses a system mode emulation, unlike
+[iSH](https://github.com/ish-app/ish) which does user mode only.
+
+vShell does not aim at porting software to Android OS. As being said, it
+uses [Alpine Linux](https://alpinelinux.org/) distribution. This effectively
+mitigates overhead of manual packaging and hosting. By using vShell, you
+can expect much higher software and service quality.
+
+If you are interested in virtual machine properties, here are them:
 
 - CPU: emulated 1-core x86 64-bit.
 - RAM (1\*): 32% of host memory + 8% for QEMU TCG buffers.
@@ -59,6 +76,14 @@ slower than host.
 
 Do not forget that at cost of performance you are getting a full virtual
 machine providing a root access to a separate operating system.
+
+## Feature requests
+
+Sorry, I do not accept feature requests.
+
+This project is private as most of things I am working on, but I have decided
+to share it with the Open Source community in case if it will be useful for
+someone.
 
 ## Development cheat-sheet
 ### Project structure
