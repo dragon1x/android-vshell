@@ -29,6 +29,7 @@
         android:theme="@style/Theme.TermApp"
         android:supportsRtl="false"
         android:requestLegacyExternalStorage="true"
+        android:hasFragileUserData="true"
         tools:ignore="GoogleAppIndexingWarning">
 
         <!-- This (or rather, value 2.1 or higher) is needed to make the Samsung Galaxy S8
