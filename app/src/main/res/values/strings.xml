@@ -24,10 +24,15 @@
 
     <!-- Context menu: more -->
     <string name="menu_show_help">Show help</string>
+    <string name="menu_open_web_preview">Open Web (%s)</string>
     <string name="menu_select_urls">Select URLs</string>
     <string name="menu_reset_terminal">Reset</string>
     <string name="menu_shutdown">Shut down</string>
     <string name="menu_toggle_ignore_bell">Ignore bell character</string>
+
+    <!-- Context menu: Open Web preview toast messages -->
+    <string name="toast_open_web_intent_failure">Failed to launch Web browser.</string>
+    <string name="toast_open_web_unavailable">Cannot use this function because port forwarding failed.</string>
 
     <!-- Select URL dialog -->
     <string name="toast_no_urls_found">No URLs detected.</string>
