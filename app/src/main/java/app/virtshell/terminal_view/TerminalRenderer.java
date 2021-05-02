@@ -251,4 +251,12 @@ final class TerminalRenderer {
 
         if (savedMatrix) canvas.restore();
     }
+
+    public float getFontWidth() {
+        return mFontWidth;
+    }
+
+    public int getFontLineSpacing() {
+        return mFontLineSpacing;
+    }
 }
