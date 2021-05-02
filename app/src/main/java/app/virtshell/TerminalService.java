@@ -81,8 +81,7 @@ public class TerminalService extends Service implements SessionChangedCallback {
     private WifiManager.WifiLock mWifiLock;
 
 
-    @Override
-    public void onCreate() {
+    private void setupNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, getString(R.string.application_name), NotificationManager.IMPORTANCE_LOW);
             channel.setDescription("Notifications from " + getString(R.string.application_name));
@@ -90,7 +89,11 @@ public class TerminalService extends Service implements SessionChangedCallback {
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             manager.createNotificationChannel(channel);
         }
+    }
 
+    @Override
+    public void onCreate() {
+        setupNotificationChannel();
         startForeground(NOTIFICATION_ID, buildNotification());
     }
 
@@ -98,14 +101,18 @@ public class TerminalService extends Service implements SessionChangedCallback {
     public void onDestroy() {
         if (mWakeLock != null) mWakeLock.release();
         if (mWifiLock != null) mWifiLock.release();
-        stopForeground(true);
         mTerminalSession.finishIfRunning();
+        stopForeground(true);
     }
 
     @SuppressLint({"Wakelock", "WakelockTimeout"})
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
+
+        setupNotificationChannel();
+        startForeground(NOTIFICATION_ID, buildNotification());
+
         if (INTENT_ACTION_SERVICE_STOP.equals(action)) {
             terminateService();
         } else if (INTENT_ACTION_WAKELOCK_ENABLE.equals(action)) {
@@ -185,6 +192,7 @@ public class TerminalService extends Service implements SessionChangedCallback {
     public void terminateService() {
         mWantsToStop = true;
         mTerminalSession.finishIfRunning();
+        stopForeground(true);
         stopSelf();
     }
 

@@ -216,6 +216,7 @@ public final class InputDispatcher implements TerminalViewClient {
                 // Extra Keys toggle.
                 case 'k':
                     mActivity.toggleShowExtraKeys();
+                    mVirtualFnKeyDown = false;
                     break;
             }
 

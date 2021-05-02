@@ -261,7 +261,9 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
                 if (!BuildConfig.DEBUG) {
                     if (mTermService.mWantsToStop) {
                         // The service wants to stop as soon as possible.
-                        finish();
+                        if (!TerminalActivity.this.isFinishing()) {
+                            finish();
+                        }
                         return;
                     }
                     mTermService.terminateService();
@@ -304,7 +306,9 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
                 });
             } else {
                 // The service connected while not in foreground - just bail out.
-                finish();
+                if (!TerminalActivity.this.isFinishing()) {
+                    finish();
+                }
             }
         } else {
             mTerminalView.attachSession(mTermService.getSession());
@@ -314,7 +318,9 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
     @Override
     public void onServiceDisconnected(ComponentName name) {
         // Respect being stopped from the TerminalService notification action.
-        finish();
+        if (!TerminalActivity.this.isFinishing()) {
+            finish();
+        }
     }
 
     /**
