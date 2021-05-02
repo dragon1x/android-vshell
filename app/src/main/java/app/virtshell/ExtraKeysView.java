@@ -192,13 +192,13 @@ public final class ExtraKeysView extends GridLayout {
                         case MotionEvent.ACTION_DOWN:
                             mLongPressCount = 0;
                             v.setBackgroundColor(BUTTON_PRESSED_COLOR);
-                            /*if ("↑↓←→".contains(buttonText)) {
+                            if ("↑↓←→".contains(buttonText)) {
                                 mScheduledExecutor = Executors.newSingleThreadScheduledExecutor();
                                 mScheduledExecutor.scheduleWithFixedDelay(() -> {
                                     mLongPressCount++;
                                     sendKey(root, buttonText);
                                 }, 400, 80, TimeUnit.MILLISECONDS);
-                            }*/
+                            }
                             return true;
                         case MotionEvent.ACTION_MOVE:
                             if ("―/|>".contains(buttonText)) {
