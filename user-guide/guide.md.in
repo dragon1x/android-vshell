@@ -1,4 +1,4 @@
-% User's Guide
+% User Guide
 
 ***
 
@@ -164,6 +164,29 @@ Swiping up some keys will expose the alternate ones. Particularly:
  - `|` will show a key for `&`
 
 You may toggle the Extra Keys Row with a key combination **Volume Up+K**.
+
+### Port forwarding
+
+QEMU is configured to expose the guest port 80 as the random port on
+local host. The primary purpose is acessing the local web services
+with taking advantage of a web browser installed on your host.
+
+The application context menu provides an address which can be used
+for accessing the guest server as well as a shortcut for opening the
+web browser with correct URL.
+
+<span style="display:block;text-align:center">
+  <img alt="Context menu screenshot" src="img/port_forwarding.png" style="width:90%;max-width:700px;">
+</span>
+
+Please note that forwarded port is accessible only on the local host.
+The application does not expose it to the local network or the Internet. If
+you wish to make your server accessible outside, consider using the
+port external forwarding services or relays.
+
+vShell comes without any server software installed. You have to
+install and configure the server on your own. Just make sure it listens
+for incoming connections on the port 80.
 
 ***
 
