@@ -6,7 +6,6 @@ apply from: 'release.gradle'
 
 android {
     compileSdkVersion 30
-    ndkVersion '22.0.7026061'
 
     dependencies {
         implementation "androidx.annotation:annotation:1.2.0"
