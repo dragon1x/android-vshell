@@ -490,7 +490,7 @@ while (($# > 0)); do
 		fi
 
 		echo "building $PACKAGE_NAME for arch $PACKAGE_TARGET_ARCH..."
-		test -t 1 && printf "\033]0;%s...\007" "$PACKAGE_NAME"
+		test -t 1 && printf "\033]0;%s...\007" "$PACKAGE_NAME" || true
 
 		if [ "x86_64" = "$PACKAGE_TARGET_ARCH" ] || [ "aarch64" = "$PACKAGE_TARGET_ARCH" ]; then
 			PACKAGE_TARGET_ARCH_BITS=64
@@ -599,7 +599,7 @@ while (($# > 0)); do
 		echo "$PACKAGE_VERSION" > "/data/data/.built-packages/$PACKAGE_NAME"
 
 		echo "finished building of '$PACKAGE_NAME'"
-		test -t 1 && printf "\033]0;%s - DONE\007" "$PACKAGE_NAME"
+		test -t 1 && printf "\033]0;%s - DONE\007" "$PACKAGE_NAME" || true
 	)
 
 	shift 1
