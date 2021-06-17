@@ -12,8 +12,30 @@ on:
       - completed
 
 jobs:
+  gradle-wrapper-check:
+    name: Validate Gradle wrapper
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Validation
+        uses: gradle/wrapper-validation-action@v1
+  terminal-tests:
+    name: Run unit tests for terminal emulator
+    needs: gradle-wrapper-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Prepare
+        run: |
+          sed -i "/apply from: 'release.gradle'/d" app/build.gradle
+          sed -i "/signingConfig signingConfigs.release/d" app/build.gradle
+      - name: Testing terminal emulator library
+        run: ./gradlew test
   build-jni:
-    name: Build JNI library 
+    name: Build JNI library
+    needs: terminal-tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
