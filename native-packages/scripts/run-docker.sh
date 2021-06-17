@@ -1,38 +1,54 @@
 #!/bin/sh
 set -e -u
 
-USER="builder"
-HOME="/home/builder"
-IMAGE_NAME="xeffyr/android-native-devenv"
-CONTAINER_NAME="android-native-devenv"
 REPOROOT=$(dirname "$(readlink -f "${0}")")/../
 
-echo "Running container '${CONTAINER_NAME}' from image '${IMAGE_NAME}'..."
+VSHELL_BUILDENV_USER="builder"
+VSHELL_BUILDENV_HOME="/home/builder"
+: "${VSHELL_BUILDENV_IMAGE_NAME:="xeffyr/native-packages-buildenv"}"
+: "${VSHELL_BUILDENV_CONTAINER_NAME:="vshell-buildenv"}"
+: "${VSHELL_BUILDENV_RUN_WITH_SUDO:=false}"
 
-sudo docker start "${CONTAINER_NAME}" > /dev/null 2> /dev/null || {
-    echo "Creating new container..."
+if [ "${VSHELL_BUILDENV_RUN_WITH_SUDO}" = "true" ]; then
+	SUDO="sudo"
+else
+	SUDO=
+fi
 
-    sudo docker run \
-            --detach \
-            --env HOME="${HOME}" \
-            --env LINES=$(tput lines) \
-            --env COLUMNS=$(tput cols) \
-            --name "${CONTAINER_NAME}" \
-            --volume "${REPOROOT}:${HOME}/env-packages" \
-            --tty \
-            "${IMAGE_NAME}"
+if [ "${GITHUB_EVENT_PATH-x}" != "x" ]; then
+	# On CI/CD tty may not be available.
+	DOCKER_TTY=""
+else
+	DOCKER_TTY="--tty"
+fi
 
-    if [ $(id -u) -ne 1000 -a $(id -u) -ne 0 ]; then
-        echo "Changed builder uid/gid... (this may take a while)"
-        sudo docker exec --tty "${CONTAINER_NAME}" chown -R $(id -u) "${HOME}"
-        sudo docker exec --tty "${CONTAINER_NAME}" chown -R $(id -u) /data
-        sudo docker exec --tty "${CONTAINER_NAME}" usermod -u $(id -u) builder
-        sudo docker exec --tty "${CONTAINER_NAME}" groupmod -g $(id -g) builder
-    fi
+echo "Running container '${VSHELL_BUILDENV_CONTAINER_NAME}' from image '${VSHELL_BUILDENV_IMAGE_NAME}'..."
+
+$SUDO docker start "${VSHELL_BUILDENV_CONTAINER_NAME}" > /dev/null 2> /dev/null || {
+	echo "Creating new container..."
+
+	$SUDO docker run --detach --tty \
+		--name "${VSHELL_BUILDENV_CONTAINER_NAME}" \
+		--volume "${REPOROOT}:${VSHELL_BUILDENV_HOME}/native-packages" \
+		"${VSHELL_BUILDENV_IMAGE_NAME}"
+
+	if [ "$(id -u)" -ne 1000 ] && [ "$(id -u)" -ne 0 ]; then
+		echo "Changed builder uid/gid... (this may take a while)"
+		$SUDO docker exec ${DOCKER_TTY} "${VSHELL_BUILDENV_CONTAINER_NAME}" \
+			sudo chown -Rh "$(id -u):$(id -g)" /data "${VSHELL_BUILDENV_HOME}"
+		$SUDO docker exec ${DOCKER_TTY} "${VSHELL_BUILDENV_CONTAINER_NAME}" \
+			sudo usermod -u "$(id -u)" "${VSHELL_BUILDENV_USER}"
+		$SUDO docker exec ${DOCKER_TTY} "${VSHELL_BUILDENV_CONTAINER_NAME}" \
+			sudo groupmod -g "$(id -g)" "${VSHELL_BUILDENV_USER}"
+	fi
 }
 
 if [ "$#" -eq  "0" ]; then
-    sudo docker exec --interactive --tty --env LINES=$(tput lines) --env COLUMNS=$(tput cols) --user "${USER}" "${CONTAINER_NAME}" bash
+	$SUDO docker exec --interactive ${DOCKER_TTY} \
+		--user "${VSHELL_BUILDENV_USER}" \
+		"${VSHELL_BUILDENV_CONTAINER_NAME}" /bin/bash
 else
-    sudo docker exec --interactive --tty --env LINES=$(tput lines) --env COLUMNS=$(tput cols) --user "${USER}" "${CONTAINER_NAME}" "${@}"
+	$SUDO docker exec --interactive ${DOCKER_TTY} \
+		--user "${VSHELL_BUILDENV_USER}" \
+		"${VSHELL_BUILDENV_CONTAINER_NAME}" "${@}"
 fi

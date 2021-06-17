@@ -1,7 +1,7 @@
 # Build with:
-#  docker build -t xeffyr/android-native-devenv .
+#  docker build -t xeffyr/native-packages-buildenv .
 # Push to docker hub with:
-#  docker push xeffyr/android-native-devenv
+#  docker push xeffyr/native-packages-buildenv
 FROM ubuntu:20.04
 
 # Fix locale to avoid warnings:
@@ -35,5 +35,5 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Finish.
 USER builder
-RUN mkdir /home/builder/env-packages
-WORKDIR /home/builder/env-packages
+RUN mkdir /home/builder/native-packages
+WORKDIR /home/builder/native-packages

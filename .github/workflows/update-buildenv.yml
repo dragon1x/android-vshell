@@ -1,0 +1,28 @@
+name: Build environment for native packages
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - native-packages/scripts/**
+
+jobs:
+  update-docker-image:
+    name: Update Docker image
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Login to Docker registry
+        uses: docker/login-action@v1
+        with:
+          registry: docker.pkg.github.com
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: native-packages/scripts
+          tags: docker.pkg.github.com/${{ github.repository }}/native-packages-buildenv:latest
