@@ -77,7 +77,7 @@ jobs:
         run: |
           ./gradlew assembleRelease
           mkdir -p artifacts
-          mv ./app/build/outputs/apk/release/* ./artifacts/
+          mv ./app/build/outputs/apk/release/*.apk ./artifacts/
       - name: Publish release
         uses: fnkr/github-action-ghr@v1.3
         env:
