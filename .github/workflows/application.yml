@@ -1,0 +1,60 @@
+name: Application
+on:
+  push:
+    paths:
+      - app/**
+      - gradle/**
+      - gradle*
+      - ./*.gradle
+  workflow_run:
+    workflows: ["Build environment for native packages"]
+    types:
+      - completed
+
+jobs:
+  build-jni:
+    name: Build JNI library 
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cpu_arch: [aarch64, arm, i686, x86_64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Login to Docker registry
+        uses: docker/login-action@v1
+        with:
+          registry: docker.pkg.github.com
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build
+        env:
+          VSHELL_BUILDENV_IMAGE_NAME: "docker.pkg.github.com/${{ github.repository }}/native-packages-buildenv:latest"
+        run: |
+          cd native-packages
+          find ./jniLibs -type f -delete
+          ./scripts/run-docker.sh ./build-package.sh -a ${{ matrix.cpu_arch }} qemu-system
+      - name: Store JNI library artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: jni-libs
+          path: native-packages/jniLibs/*/*.so
+  build-apk:
+    name: Build debug APK
+    needs: build-jni
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Prepare
+        run: |
+          find native-packages/jniLibs -type f -delete
+          sed -i "/apply from: 'release.gradle'/d" app/build.gradle
+          sed -i "/signingConfig signingConfigs.release/d" app/build.gradle
+      - name: Download JNI library artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: jni-libs
+          path: native-packages/jniLibs
+      - name: Build
+        run: ./gradlew assembleDebug
