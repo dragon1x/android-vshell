@@ -32,7 +32,7 @@ jobs:
   build-jni:
     name: Build JNI library
     needs: terminal-tests
-    #if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -61,7 +61,7 @@ jobs:
   build-release:
     name: Build release APK
     needs: build-jni
-    #if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -74,4 +74,12 @@ jobs:
       - name: Build
         env:
           KEY_PASSPHRASE: ${{ secrets.KEY_PASSPHRASE }}
-        run: ./gradlew assembleRelease
+        run: |
+          ./gradlew assembleRelease
+          mkdir -p artifacts
+          mv ./app/build/outputs/apk/release/* ./artifacts/
+      - name: Publish release
+        uses: fnkr/github-action-ghr@v1.3
+        env:
+          GHR_PATH: artifacts/
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
