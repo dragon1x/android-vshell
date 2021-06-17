@@ -108,17 +108,11 @@ mainly a frontend for QEMU serial console.
    installed. Building application on Windows is not tested.
 2. Set environment variable `ANDROID_HOME` pointing to valid up-to-date Android
    SDK installation.
-3. If you are not project author, disable import of release configuration as
-   it is encrypted and not usable by `gradle`:
-   ```
-   sed -i "/apply from: 'release.gradle'/d" app/build.gradle
-   sed -i "/signingConfig signingConfigs.release/d" app/build.gradle
-   ```
-4. Compile the app:
+3. Compile the app:
    ```
    ./gradlew assembleDebug
    ```
-5. Get the APK file from `./app/build/outputs/apk/debug`.
+4. Get the APK file from `./app/build/outputs/apk/debug`.
 
 If you are interested in instructions of building the native code part ([QEMU](https://qemu.org))
 from source, then refer to README in [./native-packages](./native-packages/README.md).

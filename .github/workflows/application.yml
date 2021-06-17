@@ -27,15 +27,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Prepare
-        run: |
-          sed -i "/apply from: 'release.gradle'/d" app/build.gradle
-          sed -i "/signingConfig signingConfigs.release/d" app/build.gradle
       - name: Testing terminal emulator library
         run: ./gradlew test
   build-jni:
     name: Build JNI library
     needs: terminal-tests
+    #if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -61,22 +58,20 @@ jobs:
         with:
           name: jni-libs
           path: native-packages/jniLibs/*/*.so
-  build-apk:
-    name: Build debug APK
+  build-release:
+    name: Build release APK
     needs: build-jni
+    #if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Prepare
-        run: |
-          find native-packages/jniLibs -type f -delete
-          sed -i "/apply from: 'release.gradle'/d" app/build.gradle
-          sed -i "/signingConfig signingConfigs.release/d" app/build.gradle
       - name: Download JNI library artifacts
         uses: actions/download-artifact@v2
         with:
           name: jni-libs
           path: native-packages/jniLibs
       - name: Build
-        run: ./gradlew assembleDebug
+        env:
+          KEY_PASSPHRASE: ${{ secrets.KEY_PASSPHRASE }}
+        run: ./gradlew assembleRelease

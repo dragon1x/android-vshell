@@ -2,7 +2,6 @@ import java.security.DigestInputStream
 import java.security.MessageDigest
 
 apply plugin: 'com.android.application'
-apply from: 'release.gradle'
 
 android {
     compileSdkVersion 30
@@ -23,6 +22,15 @@ android {
 
         ndk {
             abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('vshell_release.jks')
+            keyAlias 'vShell'
+            storePassword System.getenv("KEY_PASSPHRASE")
+            keyPassword System.getenv("KEY_PASSPHRASE")
         }
     }
 
