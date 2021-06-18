@@ -28,7 +28,6 @@ jobs:
   build-jni:
     name: Build JNI library
     needs: terminal-tests
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -63,7 +62,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Download JNI library artifacts
-        uses: action/download-artifact@v2
+        uses: actions/download-artifact@v2
         with:
           name: jni-libs-${{ github.sha }}
           path: native-packages/jniLibs
