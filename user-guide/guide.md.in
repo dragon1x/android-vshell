@@ -96,6 +96,9 @@ Clicking on a button **Acquire wakelock** will prevent the device from going
 into the sleep mode. Use this action when you need to keep the virtual machine
 from being suspended when the screen is turned off.
 
+**Tip:** enable wake lock to avoid VM time shifting issues when your device
+screen is off.
+
 Clicking on a button **Shut down** will immediately close the application.
 Shutting down the virtual machine by this way can lead to a loss of unsaved
 data, so be careful.
