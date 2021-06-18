@@ -6,10 +6,6 @@ on:
       - gradle/**
       - gradle*
       - ./*.gradle
-  workflow_run:
-    workflows: ["Build environment for native packages"]
-    types:
-      - completed
 
 jobs:
   gradle-wrapper-check:
