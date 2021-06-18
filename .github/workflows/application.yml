@@ -52,8 +52,32 @@ jobs:
       - name: Store JNI library artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: jni-libs
+          name: jni-libs-${{ github.sha }}
           path: native-packages/jniLibs/*/*.so
+          retention-days: 1
+  build-debug:
+    name: Build debug APK
+    needs: build-jni
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download JNI library artifacts
+        uses: action/download-artifact@v2
+        with:
+          name: jni-libs-${{ github.sha }}
+          path: native-packages/jniLibs
+      - name: Build
+        run: |
+          ./gradlew assembleDebug
+          mkdir -p artifacts
+          mv ./app/build/outputs/apk/debug/*.apk ./artifacts/
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: vshell-debug-${{ github.sha }}
+          path: ./artifacts/*.apk
+          retention-days: 7
   build-release:
     name: Build release APK
     needs: build-jni
@@ -65,7 +89,7 @@ jobs:
       - name: Download JNI library artifacts
         uses: actions/download-artifact@v2
         with:
-          name: jni-libs
+          name: jni-libs-${{ github.sha }}
           path: native-packages/jniLibs
       - name: Build
         env:
