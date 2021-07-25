@@ -46,6 +46,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -535,24 +536,41 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
                 startActivity(new Intent(this, HelpActivity.class));
                 return true;
             case CONTEXTMENU_OPEN_SSH:
-                int sshPort = -1;
-
-                if (mTermService != null) {
-                    sshPort = mTermService.SSH_PORT;
+                if (mTermService == null) {
+                    return false;
                 }
 
-                if (sshPort != -1) {
-                    // As it is not possible to know the right user of VM, use 'root' here.
-                    // This intent typically handled by ConnectBot or similar application which
-                    // understands ssh:// URL.
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ssh://root@127.0.0.1:" + sshPort + "/#vShell"));
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    try {
-                        startActivity(intent);
-                    } catch (Exception e) {
-                        Toast.makeText(this, R.string.toast_open_ssh_intent_failure, Toast.LENGTH_LONG).show();
-                        Log.e(Config.APP_LOG_TAG, "failed to start intent", e);
-                    }
+                if (mTermService.SSH_PORT != -1) {
+                    AlertDialog.Builder prompt = new AlertDialog.Builder(this);
+                    EditText userNameInput = new EditText(this);
+                    userNameInput.setId(R.id.ssh_user_edit);
+                    userNameInput.setText(R.string.default_ssh_user);
+                    prompt.setTitle(R.string.dialog_set_ssh_user_title);
+                    prompt.setView(userNameInput);
+
+                    prompt.setPositiveButton(R.string.ok_label, (dialog, which) -> {
+                        EditText input = (EditText) findViewById(R.id.ssh_user_edit);
+                        String userName = input.getText().toString();
+                        if (userName == null) {
+                            userName = getResources().getString(R.string.default_ssh_user);
+                        }
+
+                        if (!userName.matches("[a-z_][a-z0-9_-]{0,31}")) {
+                            Toast.makeText(this, R.string.dialog_set_ssh_user_invalid_name, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        // Such URLs handled by applications like ConnectBot.
+                        String address = "ssh://" + userName + "@127.0.0.1:" + mTermService.SSH_PORT + "/#vShell";
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(address));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        try {
+                            startActivity(intent);
+                        } catch (Exception e) {
+                            Toast.makeText(this, R.string.toast_open_ssh_intent_failure, Toast.LENGTH_LONG).show();
+                            Log.e(Config.APP_LOG_TAG, "failed to start intent", e);
+                        }
+                    }).setNegativeButton(R.string.cancel_label, ((dialog, which) -> dialog.dismiss())).show();
                 } else {
                     Toast.makeText(this, R.string.toast_open_ssh_unavailable, Toast.LENGTH_LONG).show();
                 }

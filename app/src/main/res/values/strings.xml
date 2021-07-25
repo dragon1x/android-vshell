@@ -31,11 +31,14 @@
     <string name="menu_shutdown">Shut down</string>
     <string name="menu_toggle_ignore_bell">Ignore bell character</string>
 
-    <!-- Context menu: Open SSH toast messages -->
+    <!-- Context menu: Open SSH -->
+    <string name="default_ssh_user">root</string>
+    <string name="dialog_set_ssh_user_title">Connect as user:</string>
+    <string name="dialog_set_ssh_user_invalid_name">Cannot use the given SSH user name.</string>
     <string name="toast_open_ssh_intent_failure">Failed to launch SSH client.</string>
     <string name="toast_open_ssh_unavailable">Cannot use this function because port forwarding failed.</string>
 
-    <!-- Context menu: Open Web toast messages -->
+    <!-- Context menu: Open Web -->
     <string name="toast_open_web_intent_failure">Failed to launch Web browser.</string>
     <string name="toast_open_web_unavailable">Cannot use this function because port forwarding failed.</string>
 
