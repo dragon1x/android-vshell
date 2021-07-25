@@ -543,14 +543,12 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
                 if (mTermService.SSH_PORT != -1) {
                     AlertDialog.Builder prompt = new AlertDialog.Builder(this);
                     EditText userNameInput = new EditText(this);
-                    userNameInput.setId(R.id.ssh_user_edit);
                     userNameInput.setText(R.string.default_ssh_user);
                     prompt.setTitle(R.string.dialog_set_ssh_user_title);
                     prompt.setView(userNameInput);
 
                     prompt.setPositiveButton(R.string.ok_label, (dialog, which) -> {
-                        EditText input = (EditText) findViewById(R.id.ssh_user_edit);
-                        String userName = input.getText().toString();
+                        String userName = userNameInput.getText().toString();
                         if (userName == null) {
                             userName = getResources().getString(R.string.default_ssh_user);
                         }
