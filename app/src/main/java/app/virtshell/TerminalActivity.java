@@ -458,7 +458,7 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
             webPort = getFreePort();
             if (webPort != sshPort) {
                 mTermService.WEB_PORT = webPort;
-                vmnicArgs = vmnicArgs + ",hostfwd=tcp::" + sshPort + "-:80";
+                vmnicArgs = vmnicArgs + ",hostfwd=tcp::" + webPort + "-:80";
                 break;
             } else {
                 webPort = -1;
