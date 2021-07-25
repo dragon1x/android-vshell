@@ -66,11 +66,12 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
 
     private static final int CONTEXTMENU_PASTE_ID = 1;
     private static final int CONTEXTMENU_SHOW_HELP = 2;
-    private static final int CONTEXTMENU_OPEN_WEB = 3;
-    private static final int CONTEXTMENU_SELECT_URLS = 4;
-    private static final int CONTEXTMENU_RESET_TERMINAL_ID = 5;
-    private static final int CONTEXTMEMU_SHUTDOWN = 6;
-    private static final int CONTEXTMENU_TOGGLE_IGNORE_BELL = 7;
+    private static final int CONTEXTMENU_OPEN_SSH = 3;
+    private static final int CONTEXTMENU_OPEN_WEB = 4;
+    private static final int CONTEXTMENU_SELECT_URLS = 5;
+    private static final int CONTEXTMENU_RESET_TERMINAL_ID = 6;
+    private static final int CONTEXTMEMU_SHUTDOWN = 7;
+    private static final int CONTEXTMENU_TOGGLE_IGNORE_BELL = 8;
 
     private final int MAX_FONTSIZE = 256;
     private int MIN_FONTSIZE;
@@ -437,13 +438,33 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         processArgs.addAll(Arrays.asList("-device", "virtio-rng-pci,rng=rng0,id=virtio-rng-pci0"));
 
         // Networking.
-        int webPort= getFreePort();
-        mTermService.WEB_PORT = webPort;
-        if (webPort != -1) {
-            processArgs.addAll(Arrays.asList("-netdev", "user,id=vmnic0,hostfwd=tcp:127.0.0.1:" + webPort + "-:80"));
-        } else {
-            processArgs.addAll(Arrays.asList("-netdev", "user,id=vmnic0"));
+        String vmnicArgs = "user,id=vmnic0";
+
+        // Get a free high port for SSH forwarding.
+        // This port will be exposed to external network. User should take care about security.
+        int sshPort = getFreePort();
+        mTermService.SSH_PORT = sshPort;
+        if (sshPort != -1) {
+            vmnicArgs = vmnicArgs + ",hostfwd=tcp::" + sshPort + "-:22";
         }
+
+        // Get a free high port for Web forwarding.
+        // This port will be exposed to external network. User should take care about security.
+        int webPort = -1;
+        // Case where webPort will be equal to sshPort is unlikely, but
+        // try eliminate this possibility as well.
+        for (int attempt=0; attempt<3; attempt++) {
+            webPort = getFreePort();
+            if (webPort != sshPort) {
+                mTermService.WEB_PORT = webPort;
+                vmnicArgs = vmnicArgs + ",hostfwd=tcp::" + sshPort + "-:80";
+                break;
+            } else {
+                webPort = -1;
+            }
+        }
+
+        processArgs.addAll(Arrays.asList("-netdev", vmnicArgs));
         processArgs.addAll(Arrays.asList("-device", "virtio-net-pci,netdev=vmnic0,id=virtio-net-pci0"));
 
         // Access to shared storage.
@@ -489,9 +510,13 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         menu.add(Menu.NONE, CONTEXTMENU_SHOW_HELP, Menu.NONE, R.string.menu_show_help);
         if (mTermService != null) {
-            menu.add(Menu.NONE, CONTEXTMENU_OPEN_WEB, Menu.NONE, getResources().getString(R.string.menu_open_web_preview, "localhost:" + mTermService.WEB_PORT));
-        } else {
-            menu.add(Menu.NONE, CONTEXTMENU_OPEN_WEB, Menu.NONE, getResources().getString(R.string.menu_open_web_preview, "unavailable"));
+            if (mTermService.SSH_PORT != -1) {
+                menu.add(Menu.NONE, CONTEXTMENU_OPEN_SSH, Menu.NONE, getResources().getString(R.string.menu_open_ssh, "localhost:" + mTermService.SSH_PORT));
+            }
+
+            if (mTermService.WEB_PORT != -1) {
+                menu.add(Menu.NONE, CONTEXTMENU_OPEN_WEB, Menu.NONE, getResources().getString(R.string.menu_open_web, "localhost:" + mTermService.WEB_PORT));
+            }
         }
         menu.add(Menu.NONE, CONTEXTMENU_SELECT_URLS, Menu.NONE, R.string.menu_select_urls);
         menu.add(Menu.NONE, CONTEXTMENU_RESET_TERMINAL_ID, Menu.NONE, R.string.menu_reset_terminal);
@@ -508,6 +533,29 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
                 return true;
             case CONTEXTMENU_SHOW_HELP:
                 startActivity(new Intent(this, HelpActivity.class));
+                return true;
+            case CONTEXTMENU_OPEN_SSH:
+                int sshPort = -1;
+
+                if (mTermService != null) {
+                    sshPort = mTermService.SSH_PORT;
+                }
+
+                if (sshPort != -1) {
+                    // As it is not possible to know the right user of VM, use 'root' here.
+                    // This intent typically handled by ConnectBot or similar application which
+                    // understands ssh:// URL.
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ssh://root@127.0.0.1:" + sshPort + "/#vShell"));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    try {
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        Toast.makeText(this, R.string.toast_open_ssh_intent_failure, Toast.LENGTH_LONG).show();
+                        Log.e(Config.APP_LOG_TAG, "failed to start intent", e);
+                    }
+                } else {
+                    Toast.makeText(this, R.string.toast_open_ssh_unavailable, Toast.LENGTH_LONG).show();
+                }
                 return true;
             case CONTEXTMENU_OPEN_WEB:
                 int webPort = -1;

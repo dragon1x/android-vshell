@@ -64,6 +64,7 @@ public class TerminalService extends Service implements SessionChangedCallback {
 
     private final IBinder mBinder = new LocalBinder();
 
+    public int SSH_PORT = -1;
     public int WEB_PORT = -1;
 
     /**
