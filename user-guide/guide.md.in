@@ -18,7 +18,7 @@ Here are some details on the virtual machine configuration:
 - Operating system: [Alpine Linux](https://alpinelinux.org/).
 
 Please note that provided default setup of the Alpine Linux is diskless. The
-whole operating system is copied into RAM, which takes about 40 MB. All changes
+whole operating system is copied into RAM, which takes about 80 MB. All changes
 are discarded unless were saved to the disk with the utility [lbu](https://wiki.alpinelinux.org/wiki/Alpine_local_backup).
 In order to change this behavior, you will need to format HDD and re-install
 the system from scratch, which could be easily done via 'setup-alpine' utility.
@@ -170,26 +170,22 @@ You may toggle the Extra Keys Row with a key combination **Volume Up+K**.
 
 ### Port forwarding
 
-QEMU is configured to expose the guest port 80 as the random port on
-local host. The primary purpose is acessing the local web services
-with taking advantage of a web browser installed on your host.
+QEMU is configured to expose the guest ports 22 and 80 as the random
+ports on host system. These ports are exposed externally, i.e. to Wi-Fi
+LAN or mobile network, the latter however is likely firewalled. While
+the primary purpose of these ports is for accessing SSH and Web servers,
+you can assign any custom services to guest 22 or 80 ports respectively.
 
-The application context menu provides an address which can be used
-for accessing the guest server as well as a shortcut for opening the
-web browser with correct URL.
+The application context menu provides information about ports as well as
+shortcuts for opening either SSH client (e.g. ConnectBot) or Web browser.
 
 <span style="display:block;text-align:center">
   <img alt="Context menu screenshot" src="img/port_forwarding.png" style="width:90%;max-width:700px;">
 </span>
 
-Please note that forwarded port is accessible only on the local host.
-The application does not expose it to the local network or the Internet. If
-you wish to make your server accessible outside, consider using the
-port external forwarding services or relays.
-
-vShell comes without any server software installed. You have to
-install and configure the server on your own. Just make sure it listens
-for incoming connections on the port 80.
+vShell comes without any server software installed. You have to install
+and configure it on your own. Just remember that it should listen on
+TCP port 22 or 80.
 
 ***
 
