@@ -512,7 +512,7 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         menu.add(Menu.NONE, CONTEXTMENU_SHOW_HELP, Menu.NONE, R.string.menu_show_help);
         if (mTermService != null) {
             if (mTermService.SSH_PORT != -1) {
-                menu.add(Menu.NONE, CONTEXTMENU_OPEN_SSH, Menu.NONE, getResources().getString(R.string.menu_open_ssh, "root@localhost:" + mTermService.SSH_PORT));
+                menu.add(Menu.NONE, CONTEXTMENU_OPEN_SSH, Menu.NONE, getResources().getString(R.string.menu_open_ssh, "localhost:" + mTermService.SSH_PORT));
             }
 
             if (mTermService.WEB_PORT != -1) {
