@@ -47,7 +47,7 @@ public class Config {
     /**
      * Upstream DNS server used by QEMU DNS resolver.
      */
-    public static final String QEMU_UPSTREAM_DNS = "8.8.8.8";
+    public static final String QEMU_UPSTREAM_DNS = "1.1.1.1";
 
     /**
      * A tag used for general logging.
