@@ -165,9 +165,16 @@ multiple application sessions, custom operating systems, etc.
 
 ## Resources
 
-- [Termux](https://github.com/termux): Android terminal emulator with package ecosystem. *vShell borrowed some UI parts and terminal library from Termux.*
-- [Android Terminal Emulator](https://github.com/jackpal/Android-Terminal-Emulator):
-  The first terminal app for Android OS. Deprecated.
-- [QEMU](https://qemu.org): A generic machine emulator and virtualizer.
 - [Alpine Linux](https://alpinelinux.org/): A lightweight Linux distribution built
   on Musl libc and Busybox.
+- [Android Terminal Emulator](https://github.com/jackpal/Android-Terminal-Emulator):
+  One of the first terminal applications for Android OS. Now obsolete.
+- [ConnectBot](https://github.com/connectbot/connectbot): The first SSH client for
+  Android OS.
+- [Limbo Emulator](https://github.com/limboemu/limbo): A QEMU port to Android
+  OS. Unlike vShell, this application is generic and doesn't come with OS
+  preinstalled.
+- [QEMU](https://qemu.org): A generic machine emulator and virtualizer. *This
+  is a core of the vShell app.*
+- [Termux](https://github.com/termux): Android terminal emulator with package
+  ecosystem. *vShell borrowed some UI parts and terminal library from Termux.*
