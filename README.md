@@ -1,35 +1,36 @@
 # vShell
 
-vShell (Virtual Shell) — a successor of [Termux](https://termux.com) project
-which provides an alternate implementation of the Linux environment. Unlike
-the original, this application uses [QEMU](https://www.qemu.org/) to emulate
-x86_64 hardware to run [Alpine Linux](https://alpinelinux.org/) distribution.
-This approach allows to provide a sane distribution independent of Android OS,
-with own kernel and full root access (within VM only!) to manipulate the
-system. There much more packages available with higher quality because there
-no need to maintain custom package ports.
+[vShell] (Virtual Shell) — a successor of [Termux] project which provides an
+alternate implementation of the Linux terminal emulator for Android OS.
 
-This application is expected to be compatible with any Android OS beginning
-from version 7.0 and is not affected by SELinux `execve()` issue like Termux:
-https://github.com/termux/termux-app/issues/1072.
+Unlike the original, this application uses [QEMU] to emulate x86_64 hardware to
+run [Alpine Linux] distribution. This approach allows to provide a sane
+distribution independent of Android OS, with own kernel and full root access
+giving full control over the system. Unlike Termux, vShell does not need to port
+software packages to Android OS. As result, there are more packages and their
+quality is much higher.
 
-Prebuilt APK files you can find attached in the "Releases" section on
-[GitHub](https://github.com/xeffyr/android-vshell/releases). I do not publish
-them on any of application stores. If you want to build application yourself,
-please check [BUILDING.md](./BUILDING.md).
+This application is compatible with any Android OS versions beginning from 7.0.
+It is not affected by Android security hardening like Termux, see issue about
+`execve()`: https://github.com/termux/termux-app/issues/1072.
 
-**Disclaimer**: neither vShell application nor its author is affiliated with
-the [Alpine Linux](https://alpinelinux.org/) project. Operating system is provided
-as-is and vShell author is not responsible about bugs in the software packages.
-
-<p align="center"><img src="./images/screenshot.gif" width="50%"/></p>
+<p align="center"><img src="./images/screenshot.gif" width="60%"/></p>
 
 Closest alternatives to this application:
-- [iSH](https://github.com/ish-app/ish): for IOS only. User-mode emulation.
-- [Termux](https://github.com/termux/termux-app): Android terminal emulator
-  with packages.
-- [UserLAnd](https://github.com/CypherpunkArmory/UserLAnd): Android OS only.
-  Emulates a Linux chroot environment by using `proot`.
+- [iSH]: Linux shell terminal for IOS devices. User mode emulation.
+- [UserLAnd]: Rootless Linux distribution chroot for Android OS. Uses `proot`.
+
+## Where to download
+
+You can [download] the latest version from the [GitHub Releases] page. There are
+multiple APK variants specific to each device architecture. If unsure what to
+download, use the `universal` variant.
+
+For instructions about building the own copy of application, please check
+[BUILDING.md](./BUILDING.md).
+
+*This application is not distributed via Play Store, F-Droid, alternate stores,
+Facebook, YouTube and other social media.*
 
 ## Limitations
 
@@ -41,8 +42,8 @@ not like and they will not be re-considered.
   *Only important & easy to implement things: console, special keys row, 
   context menu for extra actions, application user guide.*
 
-  If you need more, please use [Termux](https://termux.com) instead. It can
-  run Alpine Linux under QEMU as well.
+  If you need more, please use [Termux] instead. It can run Alpine Linux in
+  QEMU as well.
 
 - Application is brought by a non-root user to non-root users.
 
@@ -59,8 +60,9 @@ not like and they will not be re-considered.
 
   <p align="center"><img src="./images/sysbench_results.png" width="90%"/></p>
 
-  Apparently vShell is 10 times slower than Linux distribution inside `proot`.
-  Likely that in certain cases performance penalty could be bigger.
+  According to benchmark, vShell is 10 times slower than Linux distribution
+  inside `proot` (AArch64). However be prepared that actual performance in
+  certain cases could be lower and may depend on used software or host device.
 
 - Runtime environment is isolated from host OS and hardware.
 
@@ -153,6 +155,9 @@ nameserver 8.8.8.8
 nameserver 10.0.2.3
 ```
 
+Ports 22 and 80 are forwarded to random ports on host. Long tap on terminal
+screen to see the current port forwardings in context menu.
+
 ## Issues and feature requests
 
 Issues: https://github.com/xeffyr/android-vshell/issues
@@ -160,21 +165,42 @@ Issues: https://github.com/xeffyr/android-vshell/issues
 Questions and discussions: https://github.com/xeffyr/android-vshell/discussions
 
 When submitting a request for missing feature, please ensure that it is not
-covered by "Limits" section of this README. So don't request KVM, TUN/TAP,
-multiple application sessions, custom operating systems, etc.
+covered by "Limitations" section of this README. I would not implement support
+things like KVM, TUN/TAP, custom operating system, multiple console sessions.
+Modifications of system configuration will be considered only for important
+reasons.
+
+Since [Alpine Linux] project is a third-party project, operating system issues
+should be reported to its developers. I would not fix them.
+
+Bundled application user guide can be accessed through "Show help" button in
+the context menu (long tap \-\-\> more \-\-\> Show help). However it does not
+cover usage of Alpine Linux. If you are seeking for such information, it is
+better to visit https://wiki.alpinelinux.org/wiki/Main_Page.
 
 ## Resources
 
-- [Alpine Linux](https://alpinelinux.org/): A lightweight Linux distribution built
-  on Musl libc and Busybox.
-- [Android Terminal Emulator](https://github.com/jackpal/Android-Terminal-Emulator):
-  One of the first terminal applications for Android OS. Now obsolete.
-- [ConnectBot](https://github.com/connectbot/connectbot): The first SSH client for
-  Android OS.
-- [Limbo Emulator](https://github.com/limboemu/limbo): A QEMU port to Android
-  OS. Unlike vShell, this application is generic and doesn't come with OS
-  preinstalled.
-- [QEMU](https://qemu.org): A generic machine emulator and virtualizer. *This
-  is a core of the vShell app.*
-- [Termux](https://github.com/termux): Android terminal emulator with package
-  ecosystem. *vShell borrowed some UI parts and terminal library from Termux.*
+- [Alpine Linux]: A lightweight Linux distribution built on Musl libc and
+  Busybox.
+- [Android Terminal Emulator]: One of the first terminal applications for
+  Android OS. Now obsolete.
+- [ConnectBot]: The first SSH client for Android OS.
+- [Limbo Emulator]: A QEMU port to Android OS. Unlike vShell, this application
+  is generic and doesn't come with OS preinstalled.
+- [QEMU]: A generic machine emulator and virtualizer.
+  *This is a core of the vShell app.*
+- [Termux]: Android terminal emulator with package ecosystem.
+  *vShell borrowed some UI parts and terminal library from Termux.*
+
+[Alpine Linux]: <https://alpinelinux.org/>
+[Android Terminal Emulator]: <https://github.com/jackpal/Android-Terminal-Emulator>
+[ConnectBot]: <https://github.com/connectbot/connectbot>
+[GitHub Releases]: <https://github.com/xeffyr/android-vshell/releases>
+[Limbo Emulator]: <https://github.com/limboemu/limbo>
+[QEMU]: <https://qemu.org>
+[Termux]: <https://termux.com>
+[UserLAnd]: <https://github.com/CypherpunkArmory/UserLAnd>
+[author]: <https://github.com/xeffyr>
+[download]: <https://github.com/xeffyr/android-vshell/releases/latest>
+[iSH]: <https://github.com/ish-app/ish>
+[vShell]: <https://github.com/xeffyr/android-vshell>
