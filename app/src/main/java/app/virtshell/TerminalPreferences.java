@@ -30,11 +30,13 @@ public class TerminalPreferences {
     private static final String PREF_SHOW_EXTRA_KEYS = "show_extra_keys";
     private static final String PREF_IGNORE_BELL = "ignore_bell";
     private static final String PREF_DATA_VERSION = "data_version";
+    private static final String PREF_DEFAULT_SSH_USER = "default_ssh_user";
 
     private boolean mFirstRun;
     private boolean mShowExtraKeys;
     private boolean mIgnoreBellCharacter;
     private int mDataVersion;
+    private String mDefaultSshUser;
 
     public TerminalPreferences(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -42,6 +44,7 @@ public class TerminalPreferences {
         mShowExtraKeys = prefs.getBoolean(PREF_SHOW_EXTRA_KEYS, true);
         mIgnoreBellCharacter = prefs.getBoolean(PREF_IGNORE_BELL, false);
         mDataVersion = prefs.getInt(PREF_DATA_VERSION, 0);
+        mDefaultSshUser = prefs.getString(PREF_DEFAULT_SSH_USER, "root");
     }
 
     public boolean isFirstRun() {
@@ -83,5 +86,15 @@ public class TerminalPreferences {
 
     public int getDataVersion() {
         return mDataVersion;
+    }
+
+    public void setDefaultSshUser(Context context, String userName) {
+        mDefaultSshUser = userName;
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+            .putString(PREF_DEFAULT_SSH_USER, userName).apply();
+    }
+
+    public String getDefaultSshUser() {
+        return mDefaultSshUser;
     }
 }

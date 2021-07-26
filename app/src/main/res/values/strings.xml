@@ -32,7 +32,6 @@
     <string name="menu_toggle_ignore_bell">Ignore bell character</string>
 
     <!-- Context menu: Open SSH -->
-    <string name="default_ssh_user">root</string>
     <string name="dialog_set_ssh_user_title">Connect as user:</string>
     <string name="dialog_set_ssh_user_invalid_name">Cannot use the given SSH user name.</string>
     <string name="toast_open_ssh_intent_failure">Failed to launch SSH client.</string>

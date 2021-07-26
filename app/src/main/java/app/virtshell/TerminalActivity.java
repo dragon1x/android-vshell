@@ -543,19 +543,19 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
                 if (mTermService.SSH_PORT != -1) {
                     AlertDialog.Builder prompt = new AlertDialog.Builder(this);
                     EditText userNameInput = new EditText(this);
-                    userNameInput.setText(R.string.default_ssh_user);
+                    userNameInput.setText(mSettings.getDefaultSshUser());
                     prompt.setTitle(R.string.dialog_set_ssh_user_title);
                     prompt.setView(userNameInput);
 
                     prompt.setPositiveButton(R.string.ok_label, (dialog, which) -> {
                         String userName = userNameInput.getText().toString();
-                        if (userName == null) {
-                            userName = getResources().getString(R.string.default_ssh_user);
-                        }
 
                         if (!userName.matches("[a-z_][a-z0-9_-]{0,31}")) {
+                            dialog.dismiss();
                             Toast.makeText(this, R.string.dialog_set_ssh_user_invalid_name, Toast.LENGTH_LONG).show();
                             return;
+                        } else {
+                            mSettings.setDefaultSshUser(this, userName);
                         }
 
                         // Such URLs handled by applications like ConnectBot.
@@ -568,6 +568,7 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
                             Toast.makeText(this, R.string.toast_open_ssh_intent_failure, Toast.LENGTH_LONG).show();
                             Log.e(Config.APP_LOG_TAG, "failed to start intent", e);
                         }
+                        dialog.dismiss();
                     }).setNegativeButton(R.string.cancel_label, ((dialog, which) -> dialog.dismiss())).show();
                 } else {
                     Toast.makeText(this, R.string.toast_open_ssh_unavailable, Toast.LENGTH_LONG).show();
