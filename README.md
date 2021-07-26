@@ -54,7 +54,7 @@ not like and they will not be re-considered.
   *Because this is a system emulator, there is a big performance difference
   between host and emulated VM.*
 
-  See [sysbench](ihttps://github.com/akopytov/sysbench) performance comparison
+  See [sysbench](https://github.com/akopytov/sysbench) performance comparison
   between vShell and Termux PRoot:
 
   <p align="center"><img src="./images/sysbench_results.png" width="90%"/></p>
