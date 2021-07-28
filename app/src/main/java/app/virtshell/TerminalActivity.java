@@ -360,7 +360,7 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
 
         if (am == null) {
-            return new int[]{Config.QEMU_MIN_TCG_MEM, Config.QEMU_MIN_SAFE_MEM};
+            return new int[]{Config.QEMU_MIN_TCG_BUF, Config.QEMU_MIN_SAFE_RAM};
         }
 
         am.getMemoryInfo(memInfo);
@@ -376,8 +376,10 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
 
         // Ensure that neither tcg or ram buffer size is below minimum.
         // TCG will consume 12% of available safe-for-use memory.
-        int tcgAlloc = Math.max(Config.QEMU_MIN_TCG_MEM, (int) (safeMem * 0.12));
-        int ramAlloc = Math.max(Config.QEMU_MIN_SAFE_MEM, safeMem - tcgAlloc);
+        int tcgAlloc = Math.min(Config.QEMU_MAX_TCG_BUF,
+            Math.max(Config.QEMU_MIN_TCG_BUF, (int) (safeMem * 0.12)));
+        int ramAlloc = Math.min(Config.QEMU_MAX_SAFE_RAM,
+            Math.max(Config.QEMU_MIN_SAFE_RAM, (int) (safeMem - safeMem * 0.12)));
 
         Log.i(Config.APP_LOG_TAG, "calculated safe mem (tcg, ram): [" + tcgAlloc + ", " + ramAlloc + "]");
 
@@ -436,7 +438,7 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         // choose appropriate values.
         // mem[0] - tcg buffer size, mem[1] - vm ram buffer size.
         int[] mem = getSafeMem();
-        processArgs.addAll(Arrays.asList("-accel", "tcg,tb-size=" + mem[0], "-m", mem[1]));
+        processArgs.addAll(Arrays.asList("-accel", "tcg,tb-size=" + mem[0], "-m", String.valueOf(mem[1])));
 
         // Do not create default devices.
         processArgs.add("-nodefaults");
