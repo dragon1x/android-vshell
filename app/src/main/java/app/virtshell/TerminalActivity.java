@@ -352,15 +352,15 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
 
     /**
      * Determine a safe amount of memory which could be allocated by QEMU.
-     * @returns Safe amount of memory in MiB, -1 on failure.
+     * @returns Array containing 2 integers, [tcg, vm_ram];
      */
-    private int getSafeMem() {
+    private int[] getSafeMem() {
         Context appContext = this;
         ActivityManager am = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
         ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
 
         if (am == null) {
-            return -1;
+            return new int[]{Config.QEMU_MIN_TCG_MEM, Config.QEMU_MIN_SAFE_MEM};
         }
 
         am.getMemoryInfo(memInfo);
@@ -370,17 +370,18 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
             + memInfo.availMem + " avail, " + memInfo.threshold + " oom threshold");
         Log.i(Config.APP_LOG_TAG, "system low on memory: " + memInfo.lowMemory);
 
-        // 2x of OOM threshold + 20% of available memory would be kept for
-        // other applications and system.
-        int safeMem = (int) ((memInfo.availMem * 0.8 - memInfo.threshold * 2) / 1048576);
+        // Unconditionally reserve 20% + oom threshold for system to ensure that
+        // application won't be killed by Android unless really necessary.
+        int safeMem = (int) ((memInfo.availMem * 0.8 - memInfo.threshold) / 1048576);
 
-        Log.i(Config.APP_LOG_TAG, "calculated safe mem: " + safeMem + " mib");
+        // Ensure that neither tcg or ram buffer size is below minimum.
+        // TCG will consume 12% of available safe-for-use memory.
+        int tcgAlloc = Math.max(Config.QEMU_MIN_TCG_MEM, (int) (safeMem * 0.12));
+        int ramAlloc = Math.max(Config.QEMU_MIN_SAFE_MEM, safeMem - tcgAlloc);
 
-        if (safeMem < (Config.QEMU_MIN_TCG_MEM + Config.QEMU_MIN_SAFE_MEM)) {
-            return -1;
-        }
+        Log.i(Config.APP_LOG_TAG, "calculated safe mem (tcg, ram): [" + tcgAlloc + ", " + ramAlloc + "]");
 
-        return safeMem;
+        return new int[]{tcgAlloc, ramAlloc};
     }
 
     /**
@@ -431,27 +432,11 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         // Emulate CPU with max feature set.
         processArgs.addAll(Arrays.asList("-cpu", "max"));
 
-        int totalMem = getSafeMem();
-        // If value is below expected minimum, override it.
-        int tcgAlloc = (int) (totalMem * 0.1);
-        if (tcgAlloc < Config.QEMU_MIN_TCG_MEM) {
-            tcgAlloc = Config.QEMU_MIN_TCG_MEM;
-        }
-
-        // Don't allocate more than 256 MiB for TCG.
-        // Leave more memory for the VM.
-        if (tcgAlloc > 256) {
-            tcgAlloc = 256;
-        }
-
-        // It's expected that device always has enough memory.
-        int ramAlloc = totalMem - tcgAlloc;
-        if (ramAlloc < Config.QEMU_MIN_SAFE_MEM) {
-            ramAlloc = Config.QEMU_MIN_SAFE_MEM;
-        }
-
-        processArgs.addAll(Arrays.asList("-m", ramAlloc + "M"));
-        processArgs.addAll(Arrays.asList("-accel", "tcg,tb-size=" + tcgAlloc));
+        // Use information about available free memory reported by Android OS to
+        // choose appropriate values.
+        // mem[0] - tcg buffer size, mem[1] - vm ram buffer size.
+        int[] mem = getSafeMem();
+        processArgs.addAll(Arrays.asList("-accel", "tcg,tb-size=" + mem[0], "-m", mem[1]));
 
         // Do not create default devices.
         processArgs.add("-nodefaults");
