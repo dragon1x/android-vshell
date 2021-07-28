@@ -356,7 +356,7 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
      */
     private int getSafeMem() {
         Context appContext = this;
-        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager am = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
         ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
 
         if (am == null) {
@@ -372,7 +372,7 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
 
         // 2x of OOM threshold + 20% of available memory would be kept for
         // other applications and system.
-        int safeMem = (int) ((memInfo.availImem * 0.8 - memInfo.threshold * 2) / 1048576);
+        int safeMem = (int) ((memInfo.availMem * 0.8 - memInfo.threshold * 2) / 1048576);
 
         Log.i(Config.APP_LOG_TAG, "calculated safe mem: " + safeMem + " mib");
 
@@ -450,8 +450,8 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
             ramAlloc = Config.QEMU_MIN_SAFE_MEM;
         }
 
-        processArgs.add(Arrays.asList("-m", ramAlloc + "M"));
-        processArgs.add(Arrays.asList("-accel", "tcg,tb-size=" + tcgAlloc));
+        processArgs.addAll(Arrays.asList("-m", ramAlloc + "M"));
+        processArgs.addAll(Arrays.asList("-accel", "tcg,tb-size=" + tcgAlloc));
 
         // Do not create default devices.
         processArgs.add("-nodefaults");
