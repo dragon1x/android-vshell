@@ -50,6 +50,19 @@ public class Config {
     public static final String QEMU_UPSTREAM_DNS = "1.1.1.1";
 
     /**
+     * Minimal RAM allocation in MiB which guarantees that guest OS will
+     * boot and work properly.
+     */
+    public static final int QEMU_MIN_SAFE_MEM = 256;
+
+    /**
+     * Minimal size of TCG buffer in MiB that would not cause too many
+     * flushes of generated code cache and significant performance
+     * degradation.
+     */
+    public static final int QEMU_MIN_TCG_MEM = 64;
+
+    /**
      * A tag used for general logging.
      */
     public static final String APP_LOG_TAG = "virt-shell:app";

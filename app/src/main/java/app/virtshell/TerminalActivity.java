@@ -351,6 +351,39 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
     }
 
     /**
+     * Determine a safe amount of memory which could be allocated by QEMU.
+     * @returns Safe amount of memory in MiB, -1 on failure.
+     */
+    private int getSafeMem() {
+        Context appContext = this;
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+
+        if (am == null) {
+            return -1;
+        }
+
+        am.getMemoryInfo(memInfo);
+
+        // Log memory information for troubleshooting purposes.
+        Log.i(Config.APP_LOG_TAG, "memory: " + memInfo.totalMem + " total, "
+            + memInfo.availMem + " avail, " + memInfo.threshold + " oom threshold");
+        Log.i(Config.APP_LOG_TAG, "system low on memory: " + memInfo.lowMemory);
+
+        // 2x of OOM threshold + 20% of available memory would be kept for
+        // other applications and system.
+        int safeMem = (int) ((memInfo.availImem * 0.8 - memInfo.threshold * 2) / 1048576);
+
+        Log.i(Config.APP_LOG_TAG, "calculated safe mem: " + safeMem + " mib");
+
+        if (safeMem < (Config.QEMU_MIN_TCG_MEM + Config.QEMU_MIN_SAFE_MEM)) {
+            return -1;
+        }
+
+        return safeMem;
+    }
+
+    /**
      * Create a terminal session running QEMU.
      * @return TerminalSession instance.
      */
@@ -398,27 +431,27 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         // Emulate CPU with max feature set.
         processArgs.addAll(Arrays.asList("-cpu", "max"));
 
-        // Determine safe values for VM RAM allocation.
-        ActivityManager am = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
-        ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
-        if (am != null) {
-            am.getMemoryInfo(memInfo);
-
-            // Log memory information for troubleshooting purposes.
-            Log.i(Config.APP_LOG_TAG, "memory: " + memInfo.totalMem + " total, "
-                + memInfo.availMem + " avail, " + memInfo.threshold + " oom threshold");
-            Log.i(Config.APP_LOG_TAG, "system low on memory: " + memInfo.lowMemory);
-
-            // 32% of host memory will be used for QEMU emulated RAM.
-            int safeRam = (int) (memInfo.totalMem * 0.32 / 1048576);
-            // 8% of host memory will be used for QEMU TCG buffer.
-            int safeTcg = (int) (memInfo.totalMem * 0.08 / 1048576);
-            processArgs.addAll(Arrays.asList("-m", safeRam + "M", "-accel", "tcg,tb-size=" + safeTcg));
-        } else {
-            // Fallback.
-            Log.e(Config.APP_LOG_TAG, "failed to determine size of host memory");
-            processArgs.addAll(Arrays.asList("-m", "256M", "-accel", "tcg,tb-size=64"));
+        int totalMem = getSafeMem();
+        // If value is below expected minimum, override it.
+        int tcgAlloc = (int) (totalMem * 0.1);
+        if (tcgAlloc < Config.QEMU_MIN_TCG_MEM) {
+            tcgAlloc = Config.QEMU_MIN_TCG_MEM;
         }
+
+        // Don't allocate more than 256 MiB for TCG.
+        // Leave more memory for the VM.
+        if (tcgAlloc > 256) {
+            tcgAlloc = 256;
+        }
+
+        // It's expected that device always has enough memory.
+        int ramAlloc = totalMem - tcgAlloc;
+        if (ramAlloc < Config.QEMU_MIN_SAFE_MEM) {
+            ramAlloc = Config.QEMU_MIN_SAFE_MEM;
+        }
+
+        processArgs.add(Arrays.asList("-m", ramAlloc + "M"));
+        processArgs.add(Arrays.asList("-accel", "tcg,tb-size=" + tcgAlloc));
 
         // Do not create default devices.
         processArgs.add("-nodefaults");
