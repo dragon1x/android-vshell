@@ -11,7 +11,7 @@ use out-of-box.
 Here are some details on the virtual machine configuration:
 
 - CPU: emulated 1-core x86 64-bit.
-- RAM: 32% of host memory + 8% for QEMU TCG buffers.
+- RAM: up to 2 GiB, depending on available **free** host memory.
 - HDD: 64 GB, has a default 4 GB partition for user data.
 - Host storage: via 9P FS, mount tag `host_storage`.
 - Network: user-mode via SLiRP.

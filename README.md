@@ -117,11 +117,11 @@ will have serious impact on battery drain. So 1 core is the optimal value.
 
 **RAM:**
 
-32% of host memory. Additionally there will be allocated 8% for the TCG buffers.
+Depends on how much of **free** RAM is available on device.
 
-So vShell will use up to 40% of memory available on your device which should be
-a safe value in nearly all cases. If you decide to run something heavy in a
-parallel, you may want to save your data and shutdown vShell.
+If you want to maximize the available RAM for the VM, you will need to close
+all heavy apps before starting vShell. Maximal amount of memory which VM can
+allocate is 2 GiB.
 
 **HDD:**
 

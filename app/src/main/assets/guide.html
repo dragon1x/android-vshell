@@ -290,7 +290,7 @@ page-break-after: avoid;
 <p>Here are some details on the virtual machine configuration:</p>
 <ul>
 <li>CPU: emulated 1-core x86 64-bit.</li>
-<li>RAM: 32% of host memory + 8% for QEMU TCG buffers.</li>
+<li>RAM: up to 2 GiB, depending on available <strong>free</strong> host memory.</li>
 <li>HDD: 64 GB, has a default 4 GB partition for user data.</li>
 <li>Host storage: via 9P FS, mount tag <code>host_storage</code>.</li>
 <li>Network: user-mode via SLiRP.</li>
