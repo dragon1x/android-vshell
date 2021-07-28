@@ -403,6 +403,12 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
         if (am != null) {
             am.getMemoryInfo(memInfo);
+
+            // Log memory information for troubleshooting purposes.
+            Log.i(Config.APP_LOG_TAG, "memory: " + memInfo.totalMem + " total, "
+                + memInfo.availMem + " avail, " + memInfo.threshold + " oom threshold");
+            Log.i(Config.APP_LOG_TAG, "system low on memory: " + memInfo.lowMemory);
+
             // 32% of host memory will be used for QEMU emulated RAM.
             int safeRam = (int) (memInfo.totalMem * 0.32 / 1048576);
             // 8% of host memory will be used for QEMU TCG buffer.
