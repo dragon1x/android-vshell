@@ -509,8 +509,9 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         processArgs.addAll(Arrays.asList("-parallel", "none"));
 
         // Serial console.
-        processArgs.addAll(Arrays.asList("-chardev", "stdio,id=serial0,mux=off,signal=off"));
+        processArgs.addAll(Arrays.asList("-chardev", "stdio,id=serial0,mux=on,signal=off"));
         processArgs.addAll(Arrays.asList("-serial", "chardev:serial0"));
+        processArgs.addAll(Arrays.asList("-monitor", "chardev:serial0"));
 
         Log.i(Config.APP_LOG_TAG, "initiating QEMU session with following arguments: "
             + processArgs.toString());
