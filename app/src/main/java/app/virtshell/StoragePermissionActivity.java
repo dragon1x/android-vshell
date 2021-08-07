@@ -84,12 +84,11 @@ public class StoragePermissionActivity extends Activity {
                 break;
         }
 
-        if (storagePermissionGranted) {
-            startActivity(new Intent(this, TerminalActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-        } else {
+        if (!storagePermissionGranted) {
             Toast.makeText(this, R.string.toast_no_storage_permission, Toast.LENGTH_LONG).show();
         }
+        startActivity(new Intent(this, TerminalActivity.class)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();
     }
 }
