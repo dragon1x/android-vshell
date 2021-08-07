@@ -133,48 +133,45 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
                 .setPositiveButton(R.string.ok_label, (dialog, which) -> {
                     dialog.dismiss();
                     mSettings.completedFirstRun(this);
-                    startApplication();
+                    if (!hasStoragePermission()) {
+                        startActivity(new Intent(this, StoragePermissionActivity.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        finish();
+                    }
             }).show();
         } else {
-            startApplication();
+            // Start the service and make it run regardless of who is bound to it:
+            Intent serviceIntent = new Intent(this, TerminalService.class);
+            startService(serviceIntent);
+            if (!bindService(serviceIntent, this, 0)) {
+                throw new RuntimeException("bindService() failed");
+            }
         }
     }
 
     /**
-     * Check for storage permission and start service.
+     * Check whether application has access to shared storage.
      */
-    private void startApplication() {
-        boolean hasStoragePermission = false;
+    private boolean hasStoragePermission() {
+        boolean granted = false;
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // On Android 11 we need to deal with MANAGE_EXTERNAL_STORAGE permission to overcome
             // the scoped storage restrictions.
             // Ref: https://developer.android.com/about/versions/11/privacy/storage#all-files-access
             // Ref: https://developer.android.com/training/data-storage/manage-all-files
             if (Environment.isExternalStorageManager()) {
-                hasStoragePermission = true;
+                granted = true;
             }
         } else {
             // Otherwise use a regular permission WRITE_EXTERNAL_STORAGE.
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
-                hasStoragePermission = true;
+                granted = true;
             }
         }
 
-        // Ensure that application can manage storage.
-        if (!hasStoragePermission) {
-            startActivity(new Intent(this, StoragePermissionActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-            finish();
-            return;
-        }
-
-        // Start the service and make it run regardless of who is bound to it:
-        Intent serviceIntent = new Intent(this, TerminalService.class);
-        startService(serviceIntent);
-        if (!bindService(serviceIntent, this, 0)) {
-            throw new RuntimeException("bindService() failed");
-        }
+        return granted;
     }
 
     /**
@@ -495,11 +492,13 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         processArgs.addAll(Arrays.asList("-device", "virtio-net-pci,netdev=vmnic0,id=virtio-net-pci0"));
 
         // Access to shared storage.
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            processArgs.addAll(Arrays.asList("-fsdev",
-                "local,security_model=mapped-file,id=fsdev0,multidevs=remap,path=/storage/self/primary"));
-            processArgs.addAll(Arrays.asList("-device",
-                "virtio-9p-pci,fsdev=fsdev0,mount_tag=host_storage,id=virtio-9p-pci0"));
+        if (hasStoragePermission()) {
+            if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                processArgs.addAll(Arrays.asList("-fsdev",
+                    "local,security_model=mapped-file,id=fsdev0,multidevs=remap,path=/storage/self/primary"));
+                processArgs.addAll(Arrays.asList("-device",
+                    "virtio-9p-pci,fsdev=fsdev0,mount_tag=host_storage,id=virtio-9p-pci0"));
+            }
         }
 
         // We need only monitor & serial consoles.
