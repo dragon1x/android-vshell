@@ -497,7 +497,7 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         // Access to shared storage.
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             processArgs.addAll(Arrays.asList("-fsdev",
-                "local,security_model=none,id=fsdev0,multidevs=remap,path=/storage/self/primary"));
+                "local,security_model=mapped-file,id=fsdev0,multidevs=remap,path=/storage/self/primary"));
             processArgs.addAll(Arrays.asList("-device",
                 "virtio-9p-pci,fsdev=fsdev0,mount_tag=host_storage,id=virtio-9p-pci0"));
         }
