@@ -8,8 +8,6 @@ body:
   - type: markdown
     attributes:
       value: |
-        I would like to hear which features you want to see in this application, but please make sure it would fit well into application design. Do not request custom operating systems, multiple terminal sessions, KVM support or something else covered by [LIMITATIONS.md](https://github.com/xeffyr/android-vshell/blob/master/LIMITATIONS.md) article.
-
         To submit a request of a new feature, fill the form below. Be patient, do not expect that feature will get added immediately.
   - type: textarea
     attributes:
@@ -20,6 +18,7 @@ body:
   - type: checkboxes
     attributes:
       label: Design limits acknowledgement
+      description: Requests of features that do not fit into application design will be rejected.
       options:
         - label: I have read and understand [LIMITATIONS.md](https://github.com/xeffyr/android-vshell/blob/master/LIMITATIONS.md)
           required: true
