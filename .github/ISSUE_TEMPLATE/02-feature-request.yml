@@ -1,0 +1,25 @@
+name: "Feature request"
+description: "Request a new functionality"
+title: "[Feature]: "
+labels: [enhancement]
+assignees:
+  - xeffyr
+body:
+  - type: markdown
+    attributes:
+      value: |
+        I would like to hear which features you want to see in this application, but please make sure it would fit well into application design. Do not request custom operating systems, multiple terminal sessions, KVM support or something else covered by [LIMITATIONS.md](https://github.com/xeffyr/android-vshell/blob/master/LIMITATIONS.md) article.
+
+        To submit a request of a new feature, fill the form below. Be patient, do not expect that feature will get added immediately.
+  - type: textarea
+    attributes:
+      label: Feature description
+      description: A clear and concise description of a feature you would like to see in application.
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Design limits acknowledgement
+      options:
+        - label: I have read and understand [LIMITATIONS.md](https://github.com/xeffyr/android-vshell/blob/master/LIMITATIONS.md)
+          required: true
