@@ -26,78 +26,14 @@ You can [download] the latest version from the [GitHub Releases] page. There are
 multiple APK variants specific to each device architecture. If unsure what to
 download, use the `universal` variant.
 
+Check the [LIMITATIONS.md](./LIMITATIONS.md) to learn about functional limits
+of this software.
+
 For instructions about building the own copy of application, please check
 [BUILDING.md](./BUILDING.md).
 
 *This application is not distributed via Play Store, F-Droid, alternate stores,
 Facebook, YouTube and other social media.*
-
-## Limitations
-
-There some absolute limits implied by application design. Some of them you may
-not like and they will not be re-considered.
-
-- Application user interface is very minimal.
-
-  *Only important & easy to implement things: console, special keys row, 
-  context menu for extra actions, application user guide.*
-
-  If you need more, please use [Termux] instead. It can run Alpine Linux in
-  QEMU as well.
-
-- Application is brought by a non-root user to non-root users.
-
-  *Do not request KVM, TUN/TAP and other features requiring rooted devices.
-  I don't root my device and would not suggest rooting for others.*
-
-- Requires a high-end device with good CPU, amount of RAM and battery.
-
-  *Because this is a system emulator, there is a big performance difference
-  between host and emulated VM.*
-
-  See [sysbench](https://github.com/akopytov/sysbench) performance comparison
-  between vShell and Termux PRoot:
-
-  <p align="center"><img src="./images/sysbench_results.png" width="90%"/></p>
-
-  According to benchmark, vShell is 10 times slower than Linux distribution
-  inside `proot` (AArch64). However be prepared that actual performance in
-  certain cases could be lower and may depend on used software or host device.
-
-- Runtime environment is isolated from host OS and hardware.
-
-  *Don't even try to root your device or dump packets from your Wi-Fi dongle.
-  This is not possible with vShell.*
-
-  This also means you cannot control application state from the VM.
-
-- No graphics.
-
-  *vShell is a "virtual shell", isn't it?*
-
-  You can install a VNC server inside, but I do not guarantee that graphics
-  would be very useful for you due to low performance.
-
-- Only one terminal session.
-
-  *This limit arises from a fact that vShell doesn't use QEMU as external
-  program. Instead it is merged with terminal emulator code. It is possible
-  to implement multiple sessions but will require lot of work.*
-
-  Use `tmux` or other multiplexer instead.
-
-- Requires skills in shell scripting and Linux system administering.
-
-  *What else you will expect from application providing a VM with Linux
-  distribution?*
-
-  If you want use vShell, then you will want to learn how to use Linux
-  distributions. There lots of books and articles about this on the Internet,
-  do not ask me for mentorship — I will ignore such requests.
-
-  Also: do not ask me how to install Kali or Parrot OS into vShell.
-  Remembering that you need to learn shell scripting and Linux system
-  administeration first, right?
 
 ## Properties of emulated VM
 
