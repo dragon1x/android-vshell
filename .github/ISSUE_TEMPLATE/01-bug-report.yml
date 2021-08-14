@@ -1,0 +1,31 @@
+name: "Bug report"
+description: "Create a report to help us improve"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is a bug tracker of [vShell](https://github.com/xeffyr/android-vshell) application for Android OS. Please do not submit issues related to the operating system, e.g. package installation or execution issues, missing components, etc. This project is not affiliated in any way with [Alpine Linux](https://alpinelinux.org/) and its author will not work on package fixes.
+
+        To submit a bug report, please fill the form below. Provide as much as possible information about the encountered issue. This will help developer to understand the problem correctly and provide a solution.
+  - type: textarea
+    attributes:
+      label: Problem description
+      description: |
+        A clear and concise description of what the problem is. You may attach the logs, screenshots, screen video recording and whatever else that will help to understand the issue.
+
+        Logs can be obtained through ADB by running command `adb logcat -d`, assuming you have connected your device over USB to host machine and have Android SDK platform-tools installed and in `PATH`.
+  - type: textarea
+    attributes:
+      label: What steps will reproduce the bug?
+  - type: textarea
+    attributes:
+      label: What is the expected behavior?
+  - type: input
+    attributes:
+      label: Application version
+  - type: input
+    attributes:
+      label: Android OS version
+  - type: input
+    attributes:
+      label: Device CPU architecture
