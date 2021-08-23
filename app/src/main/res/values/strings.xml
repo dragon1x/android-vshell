@@ -35,11 +35,11 @@
     <!-- Context menu: Open SSH -->
     <string name="dialog_set_ssh_user_title">Connect as user:</string>
     <string name="dialog_set_ssh_user_invalid_name">Cannot use the given SSH user name.</string>
-    <string name="toast_open_ssh_intent_failure">Failed to launch SSH client.</string>
+    <string name="toast_open_ssh_intent_failure">Unable to launch SSH client Android application.</string>
     <string name="toast_open_ssh_unavailable">Cannot use this function because port forwarding failed.</string>
 
     <!-- Context menu: Open Web -->
-    <string name="toast_open_web_intent_failure">Failed to launch Web browser.</string>
+    <string name="toast_open_web_intent_failure">Unable to launch web browser Android application.</string>
     <string name="toast_open_web_unavailable">Cannot use this function because port forwarding failed.</string>
 
     <!-- Select URL dialog -->
