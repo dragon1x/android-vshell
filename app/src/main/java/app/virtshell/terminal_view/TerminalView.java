@@ -567,13 +567,15 @@ public final class TerminalView extends View {
         final boolean controlDown = event.isCtrlPressed() || mClient.readControlKey();
         final boolean leftAltDown = (metaState & KeyEvent.META_ALT_LEFT_ON) != 0 || mClient.readAltKey();
         final boolean rightAltDownFromEvent = (metaState & KeyEvent.META_ALT_RIGHT_ON) != 0;
+        final boolean shiftDown = event.isShiftPressed() || mClient.readShiftKey();
+        final boolean fnDown = event.isFunctionPressed() || mClient.readFnKey();
 
         int keyMod = 0;
         if (controlDown) keyMod |= KeyHandler.KEYMOD_CTRL;
         if (event.isAltPressed() || leftAltDown) keyMod |= KeyHandler.KEYMOD_ALT;
-        if (event.isShiftPressed()) keyMod |= KeyHandler.KEYMOD_SHIFT;
+        if (shiftDown) keyMod |= KeyHandler.KEYMOD_SHIFT;
         if (event.isNumLockOn()) keyMod |= KeyHandler.KEYMOD_NUM_LOCK;
-        if (!event.isFunctionPressed() && handleKeyCode(keyCode, keyMod)) {
+        if (!fnDown && handleKeyCode(keyCode, keyMod)) {
             if (LOG_KEY_EVENTS) Log.i(Config.INPUT_LOG_TAG, "handleKeyCode() took key event");
             return true;
         }
@@ -587,6 +589,9 @@ public final class TerminalView extends View {
             bitsToClear |= KeyEvent.META_ALT_ON | KeyEvent.META_ALT_LEFT_ON;
         }
         int effectiveMetaState = event.getMetaState() & ~bitsToClear;
+
+        if (shiftDown) effectiveMetaState |= KeyEvent.META_SHIFT_ON | KeyEvent.META_SHIFT_LEFT_ON;
+        if (fnDown) effectiveMetaState |= KeyEvent.META_FUNCTION_ON;
 
         int result = event.getUnicodeChar(effectiveMetaState);
         if (LOG_KEY_EVENTS)

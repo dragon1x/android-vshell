@@ -121,6 +121,16 @@ public final class InputDispatcher implements TerminalViewClient {
     }
 
     @Override
+    public boolean readShiftKey() {
+        return (mActivity.mExtraKeysView != null && mActivity.mExtraKeysView.readShiftButton());
+    }
+
+    @Override
+    public boolean readFnKey() {
+        return (mActivity.mExtraKeysView != null && mActivity.mExtraKeysView.readFnButton());
+    }
+
+    @Override
     public boolean onCodePoint(final int codePoint, boolean ctrlDown, TerminalSession session) {
         if (mVirtualFnKeyDown) {
             int resultingKeyCode = -1;

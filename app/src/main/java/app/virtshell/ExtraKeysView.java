@@ -34,6 +34,7 @@ import android.widget.GridLayout;
 import android.widget.PopupWindow;
 import android.widget.ToggleButton;
 
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -53,6 +54,8 @@ public final class ExtraKeysView extends GridLayout {
 
     private ToggleButton mControlButton;
     private ToggleButton mAltButton;
+    private ToggleButton mShiftButton;
+    private ToggleButton mFnButton;
     private ScheduledExecutorService mScheduledExecutor;
     private PopupWindow mPopupWindow;
     private int mLongPressCount;
@@ -62,34 +65,38 @@ public final class ExtraKeysView extends GridLayout {
         reload();
     }
 
-    public boolean readAltButton() {
-        if (mAltButton.isPressed()) {
+    public boolean readSpecialButton(ToggleButton specialButton) {
+        if (specialButton == null) {
+            return false;
+        }
+
+	if (specialButton.isPressed()) {
             return true;
         }
 
-        boolean result = mAltButton.isChecked();
-
-        if (result) {
-            mAltButton.setChecked(false);
-            mAltButton.setTextColor(TEXT_COLOR);
+        boolean result = specialButton.isChecked();
+	if (result) {
+            specialButton.setChecked(false);
+            specialButton.setTextColor(TEXT_COLOR);
         }
 
         return result;
     }
 
+    public boolean readShiftButton() {
+        return readSpecialButton(mShiftButton);
+    }
+
     public boolean readControlButton() {
-        if (mControlButton.isPressed()) {
-            return true;
-        }
+        return readSpecialButton(mControlButton);
+    }
 
-        boolean result = mControlButton.isChecked();
+    public boolean readAltButton() {
+        return readSpecialButton(mAltButton);
+    }
 
-        if (result) {
-            mControlButton.setChecked(false);
-            mControlButton.setTextColor(TEXT_COLOR);
-        }
-
-        return result;
+    public boolean readFnButton() {
+        return readSpecialButton(mFnButton);
     }
 
     private void popup(View view, String text) {
@@ -123,8 +130,8 @@ public final class ExtraKeysView extends GridLayout {
         removeAllViews();
 
         String[][] buttons = {
-            {"ESC", "INS", "―",    "|",   "HOME", "↑", "END", "PGUP"},
-            {"TAB", "DEL", "CTRL", "ALT", "←",    "↓", "→",   "PGDN"}
+            {"ESC",  "INS",  "TAB", "DEL", "HOME", "↑", "END", "PGUP"},
+            {"SHFT", "CTRL", "ALT", "FN",  "←",    "↓", "→",   "PGDN"}
         };
 
         final int rows = buttons.length;
@@ -139,6 +146,11 @@ public final class ExtraKeysView extends GridLayout {
                 Button button;
 
                 switch (buttonText) {
+                    case "SHFT":
+                        button = mShiftButton = new ToggleButton(getContext(), null,
+                            android.R.attr.buttonBarButtonStyle);
+                        button.setClickable(true);
+                        break;
                     case "CTRL":
                         button = mControlButton = new ToggleButton(getContext(), null,
                             android.R.attr.buttonBarButtonStyle);
@@ -146,6 +158,11 @@ public final class ExtraKeysView extends GridLayout {
                         break;
                     case "ALT":
                         button = mAltButton = new ToggleButton(getContext(), null,
+                            android.R.attr.buttonBarButtonStyle);
+                        button.setClickable(true);
+                        break;
+                    case "FN":
+                        button = mFnButton = new ToggleButton(getContext(), null,
                             android.R.attr.buttonBarButtonStyle);
                         button.setClickable(true);
                         break;
@@ -174,8 +191,10 @@ public final class ExtraKeysView extends GridLayout {
                     View root = getRootView();
 
                     switch (buttonText) {
+                        case "SHFT":
                         case "CTRL":
                         case "ALT":
+                        case "FN":
                             ToggleButton self = (ToggleButton) finalButton;
                             self.setChecked(self.isChecked());
                             self.setTextColor(self.isChecked() ? 0xFF00CC66 : TEXT_COLOR);
@@ -198,7 +217,7 @@ public final class ExtraKeysView extends GridLayout {
                                 mScheduledExecutor = null;
                             }
 
-                            if ("↑↓←→".contains(buttonText)) {
+                            if (Arrays.asList("DEL", "↑", "↓", "←", "→").contains(buttonText)) {
                                 mScheduledExecutor = Executors.newSingleThreadScheduledExecutor();
                                 mScheduledExecutor.scheduleWithFixedDelay(() -> {
                                     mLongPressCount++;
