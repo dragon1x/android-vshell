@@ -130,9 +130,9 @@ public final class ExtraKeysView extends GridLayout {
         removeAllViews();
 
         String[][] buttons = {
-            {"ESC",  "INS",  "TAB", "DEL", "HOME", "↑", "END", "PGUP"},
-            {"SHFT", "CTRL", "ALT", "FN",  "←",    "↓", "→",   "PGDN"}
-        };
+            {"ESC", "INS", "―",    "|",   "HOME", "↑", "END", "PGUP"},
+            {"TAB", "DEL", "CTRL", "ALT", "←",    "↓", "→",   "PGDN"}
+	};
 
         final int rows = buttons.length;
         final int[] cols = {buttons[0].length, buttons[1].length};
