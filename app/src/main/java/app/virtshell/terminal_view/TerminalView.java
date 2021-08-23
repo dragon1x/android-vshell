@@ -44,10 +44,13 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.accessibility.AccessibilityManager;
+import android.view.autofill.AutofillValue;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Scroller;
+
+import androidx.annotation.RequiresApi;
 
 import app.virtshell.Config;
 import app.virtshell.R;
@@ -922,5 +925,25 @@ public final class TerminalView extends View {
                     showFloatingToolbar();
             }
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void autofill(AutofillValue value) {
+        if (value.isText()) {
+            mTermSession.write(value.getTextValue().toString());
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public int getAutofillType() {
+        return AUTOFILL_TYPE_TEXT;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public AutofillValue getAutofillValue() {
+        return AutofillValue.forText("");
     }
 }

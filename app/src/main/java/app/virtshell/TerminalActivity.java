@@ -46,6 +46,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.autofill.AutofillManager;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -69,10 +70,11 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
     private static final int CONTEXTMENU_SHOW_HELP = 2;
     private static final int CONTEXTMENU_OPEN_SSH = 3;
     private static final int CONTEXTMENU_OPEN_WEB = 4;
-    private static final int CONTEXTMENU_SELECT_URLS = 5;
-    private static final int CONTEXTMENU_RESET_TERMINAL_ID = 6;
-    private static final int CONTEXTMEMU_SHUTDOWN = 7;
-    private static final int CONTEXTMENU_TOGGLE_IGNORE_BELL = 8;
+    private static final int CONTEXTMENU_AUTOFILL_PW = 5;
+    private static final int CONTEXTMENU_SELECT_URLS = 6;
+    private static final int CONTEXTMENU_RESET_TERMINAL_ID = 7;
+    private static final int CONTEXTMEMU_SHUTDOWN = 8;
+    private static final int CONTEXTMENU_TOGGLE_IGNORE_BELL = 9;
 
     private final int MAX_FONTSIZE = 256;
     private int MIN_FONTSIZE;
@@ -545,6 +547,12 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
                 menu.add(Menu.NONE, CONTEXTMENU_OPEN_WEB, Menu.NONE, getResources().getString(R.string.menu_open_web, "localhost:" + mTermService.WEB_PORT));
             }
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            AutofillManager autofillManager = getSystemService(AutofillManager.class);
+            if (autofillManager != null && autofillManager.isEnabled()) {
+                menu.add(Menu.NONE, CONTEXTMENU_AUTOFILL_PW, Menu.NONE, R.string.menu_autofill_pw);
+            }
+        }
         menu.add(Menu.NONE, CONTEXTMENU_SELECT_URLS, Menu.NONE, R.string.menu_select_urls);
         menu.add(Menu.NONE, CONTEXTMENU_RESET_TERMINAL_ID, Menu.NONE, R.string.menu_reset_terminal);
         menu.add(Menu.NONE, CONTEXTMEMU_SHUTDOWN, Menu.NONE, R.string.menu_shutdown);
@@ -618,6 +626,14 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
                     }
                 } else {
                     Toast.makeText(this, R.string.toast_open_web_unavailable, Toast.LENGTH_LONG).show();
+                }
+                return true;
+            case CONTEXTMENU_AUTOFILL_PW:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    AutofillManager autofillManager = getSystemService(AutofillManager.class);
+                    if (autofillManager != null && autofillManager.isEnabled()) {
+                        autofillManager.requestAutofill(mTerminalView);
+                    }
                 }
                 return true;
             case CONTEXTMENU_SELECT_URLS:

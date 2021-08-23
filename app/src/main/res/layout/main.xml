@@ -14,7 +14,9 @@
         android:layout_above="@id/extra_keys"
         android:focusableInTouchMode="true"
         android:scrollbarThumbVertical="@drawable/terminal_scroll_shape"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        android:importantForAutofill="no"
+        android:autofillHints="password" />
 
     <app.virtshell.ExtraKeysView
         android:id="@+id/extra_keys"
