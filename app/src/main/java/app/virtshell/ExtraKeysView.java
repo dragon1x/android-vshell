@@ -217,7 +217,9 @@ public final class ExtraKeysView extends GridLayout {
                                 mScheduledExecutor = null;
                             }
 
-                            if (Arrays.asList("DEL", "↑", "↓", "←", "→").contains(buttonText)) {
+                            if (Arrays.asList("ESC", "INS", "TAB", "DEL",
+                                    "HOME", "END", "PGDN", "PGUP",
+                                    "↑", "↓", "←", "→").contains(buttonText)) {
                                 mScheduledExecutor = Executors.newSingleThreadScheduledExecutor();
                                 mScheduledExecutor.scheduleWithFixedDelay(() -> {
                                     mLongPressCount++;
