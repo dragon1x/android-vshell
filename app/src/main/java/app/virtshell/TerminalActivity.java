@@ -770,6 +770,7 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         regex_sb.append("finger|");                 // The Finger proto.
         regex_sb.append("ftp(?:s?)|");              // The FTP proto.
         regex_sb.append("git|");                    // The Git proto.
+        regex_sb.append("gemini|");                 // The Gemini proto.
         regex_sb.append("gopher|");                 // The Gopher proto.
         regex_sb.append("http(?:s?)|");             // The HTTP proto.
         regex_sb.append("imap(?:s?)|");             // The IMAP proto.
