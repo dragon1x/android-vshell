@@ -98,8 +98,6 @@ screen to see the current port forwardings in context menu.
 
 Issues: https://github.com/xeffyr/android-vshell/issues
 
-Questions and discussions: https://github.com/xeffyr/android-vshell/discussions
-
 When submitting a request for missing feature, please ensure that it is not
 covered by "Limitations" section of this README. I would not implement support
 things like KVM, TUN/TAP, custom operating system, multiple console sessions.
@@ -113,6 +111,8 @@ Bundled application user guide can be accessed through "Show help" button in
 the context menu (long tap \-\-\> more \-\-\> Show help). However it does not
 cover usage of Alpine Linux. If you are seeking for such information, it is
 better to visit https://wiki.alpinelinux.org/wiki/Main_Page.
+
+**Don't ask me for mentorship.**
 
 ## Resources
 
