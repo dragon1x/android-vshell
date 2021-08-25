@@ -1,12 +1,12 @@
-diff -uNr qemu-5.2.0/meson.build qemu-5.2.0.mod/meson.build
---- qemu-5.2.0/meson.build	2021-01-27 00:12:36.517727494 +0000
-+++ qemu-5.2.0.mod/meson.build	2021-01-27 00:13:02.353903095 +0000
-@@ -1844,15 +1844,14 @@
-   endif
-   foreach exe: execs
-     emulators += {exe['name']:
--         executable(exe['name'], exe['sources'],
-+         library(exe['name'], exe['sources'],
+diff -uNr qemu-6.1.0/meson.build qemu-6.1.0.mod/meson.build
+--- qemu-6.1.0/meson.build	2021-08-25 17:48:29.340359079 +0300
++++ qemu-6.1.0.mod/meson.build	2021-08-25 17:51:34.265841354 +0300
+@@ -2646,15 +2646,14 @@
+       exe_name += '-unsigned'
+     endif
+ 
+-    emulator = executable(exe_name, exe['sources'],
++    emulator = library(exe_name, exe['sources'],
                 install: true,
                 c_args: c_args,
                 dependencies: arch_deps + deps + exe['dependencies'],
@@ -16,12 +16,12 @@ diff -uNr qemu-5.2.0/meson.build qemu-5.2.0.mod/meson.build
 -               link_args: link_args,
 -               gui_app: exe['gui'])
 +               link_args: link_args)
-     }
  
-     if 'CONFIG_TRACE_SYSTEMTAP' in config_host
-diff -uNr qemu-5.2.0/softmmu/main.c qemu-5.2.0.mod/softmmu/main.c
---- qemu-5.2.0/softmmu/main.c	2020-12-08 16:59:44.000000000 +0000
-+++ qemu-5.2.0.mod/softmmu/main.c	2021-01-27 00:33:48.249817943 +0000
+     if targetos == 'darwin'
+       icon = 'pc-bios/qemu.rsrc'
+diff -uNr qemu-6.1.0/softmmu/main.c qemu-6.1.0.mod/softmmu/main.c
+--- qemu-6.1.0/softmmu/main.c	2021-08-24 20:35:41.000000000 +0300
++++ qemu-6.1.0.mod/softmmu/main.c	2021-08-25 17:49:21.448777019 +0300
 @@ -26,6 +26,19 @@
  #include "qemu-common.h"
  #include "sysemu/sysemu.h"

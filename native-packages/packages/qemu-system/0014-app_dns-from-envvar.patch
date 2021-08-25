@@ -1,21 +1,7 @@
-diff -uNr qemu-5.2.0/slirp/src/slirp.c qemu-5.2.0.mod/slirp/src/slirp.c
---- qemu-5.2.0/slirp/src/slirp.c	2021-01-25 21:44:45.222148159 +0000
-+++ qemu-5.2.0.mod/slirp/src/slirp.c	2021-01-25 21:48:54.730760821 +0000
-@@ -123,6 +123,7 @@
- 
- #else
- 
-+#if 0
- static int get_dns_addr_cached(void *pdns_addr, void *cached_addr,
-                                socklen_t addrlen, struct stat *cached_stat,
-                                unsigned *cached_time)
-@@ -148,71 +149,61 @@
-     }
-     return 1;
- }
-+#endif
- 
- static int get_dns_addr_resolv_conf(int af, void *pdns_addr, void *cached_addr,
+diff -uNr qemu-6.1.0/slirp/src/slirp.c qemu-6.1.0.mod/slirp/src/slirp.c
+--- qemu-6.1.0/slirp/src/slirp.c	2021-08-25 22:41:18.897068615 +0300
++++ qemu-6.1.0.mod/slirp/src/slirp.c	2021-08-26 00:20:55.545515218 +0300
+@@ -254,65 +254,49 @@
                                      socklen_t addrlen, uint32_t *scope_id,
                                      unsigned *cached_time)
  {
@@ -23,12 +9,17 @@ diff -uNr qemu-5.2.0/slirp/src/slirp.c qemu-5.2.0.mod/slirp/src/slirp.c
 -    char buff2[257];
 -    FILE *f;
 -    int found = 0;
-     void *tmp_addr = alloca(addrlen);
+-    union {
+-        struct in_addr dns_addr;
+-        struct in6_addr dns6_addr;
+-    } tmp_addr;
++    void *tmp_addr = alloca(addrlen);
 +    char *env_dns_addr = getenv("CONFIG_QEMU_DNS");
 +    int found = 1;
      unsigned if_index;
  
--    char *prefixed_resolvconf_path = android_dynamic_path_prefix("/etc/resolv.conf");
+-    assert(sizeof(tmp_addr) >= addrlen);
+-    char *prefixed_resolvconf_path = android_dynamic_path_prefix(RESOLV_CONF_PATH);
 -    f = fopen(prefixed_resolvconf_path, "r");
 -    if (!f) {
 -        free(prefixed_resolvconf_path);
@@ -37,7 +28,7 @@ diff -uNr qemu-5.2.0/slirp/src/slirp.c qemu-5.2.0.mod/slirp/src/slirp.c
 +        env_dns_addr = "1.1.1.1";
      }
 -    free(prefixed_resolvconf_path);
- 
+-
 -    DEBUG_MISC("IP address of your DNS(s):");
 -    while (fgets(buff, 512, f) != NULL) {
 -        if (sscanf(buff, "nameserver%*[ \t]%256s", buff2) == 1) {
@@ -47,31 +38,31 @@ diff -uNr qemu-5.2.0/slirp/src/slirp.c qemu-5.2.0.mod/slirp/src/slirp.c
 -                *c = '\0';
 -            } else {
 -                if_index = 0;
+-            }
+ 
+-            if (!inet_pton(af, buff2, &tmp_addr)) {
+-                continue;
+-            }
+-            /* If it's the first one, set it to dns_addr */
+-            if (!found) {
+-                memcpy(pdns_addr, &tmp_addr, addrlen);
+-                memcpy(cached_addr, &tmp_addr, addrlen);
+-                if (scope_id) {
+-                    *scope_id = if_index;
+-                }
+-                *cached_time = curtime;
 +    if (!inet_pton(af, env_dns_addr, tmp_addr)) {
 +        if (af == AF_INET) {
 +            if (!inet_pton(AF_INET, "1.1.1.1", tmp_addr)) {
 +                found = 0;
              }
 -
--            if (!inet_pton(af, buff2, tmp_addr)) {
--                continue;
--            }
--            /* If it's the first one, set it to dns_addr */
--            if (!found) {
--                memcpy(pdns_addr, tmp_addr, addrlen);
--                memcpy(cached_addr, tmp_addr, addrlen);
--                if (scope_id) {
--                    *scope_id = if_index;
--                }
--                *cached_time = curtime;
--            }
--
 -            if (++found > 3) {
 -                DEBUG_MISC("  (more)");
 -                break;
 -            } else if (slirp_debug & DBG_MISC) {
 -                char s[INET6_ADDRSTRLEN];
--                const char *res = inet_ntop(af, tmp_addr, s, sizeof(s));
+-                const char *res = inet_ntop(af, &tmp_addr, s, sizeof(s));
 -                if (!res) {
 -                    res = "  (string conversion error)";
 -                }
@@ -110,32 +101,3 @@ diff -uNr qemu-5.2.0/slirp/src/slirp.c qemu-5.2.0.mod/slirp/src/slirp.c
      return 0;
  }
  
- int get_dns_addr(struct in_addr *pdns_addr)
- {
-+#if 0
-     static struct stat dns_addr_stat;
- 
-     if (dns_addr.s_addr != 0) {
-@@ -223,12 +214,14 @@
-             return ret;
-         }
-     }
-+#endif
-     return get_dns_addr_resolv_conf(AF_INET, pdns_addr, &dns_addr,
-                                     sizeof(dns_addr), NULL, &dns_addr_time);
- }
- 
- int get_dns6_addr(struct in6_addr *pdns6_addr, uint32_t *scope_id)
- {
-+#if 0
-     static struct stat dns6_addr_stat;
- 
-     if (!in6_zero(&dns6_addr)) {
-@@ -239,6 +232,7 @@
-             return ret;
-         }
-     }
-+#endif
-     return get_dns_addr_resolv_conf(AF_INET6, pdns6_addr, &dns6_addr,
-                                     sizeof(dns6_addr), scope_id,
-                                     &dns6_addr_time);

@@ -1,7 +1,7 @@
 PACKAGE_VERSION="2.58.3"
 PACKAGE_SRCURL="https://ftp.gnome.org/pub/gnome/sources/glib/${PACKAGE_VERSION:0:4}/glib-${PACKAGE_VERSION}.tar.xz"
 PACKAGE_SHA256="8f43c31767e88a25da72b52a40f3301fefc49a665b56dc10ee7cc9565cbe7481"
-PACKAGE_DEPENDS="libandroid-support, libffi, zlib"
+PACKAGE_DEPENDS="libandroid-support, libffi, libiconv, zlib"
 
 # --enable-compile-warnings=no to get rid of format strings causing errors.
 PACKAGE_EXTRA_CONFIGURE_ARGS="
@@ -12,6 +12,7 @@ PACKAGE_EXTRA_CONFIGURE_ARGS="
 --disable-libelf
 --disable-libmount
 --with-pcre=internal
+--with-iconv=external
 "
 
 builder_step_pre_configure() {

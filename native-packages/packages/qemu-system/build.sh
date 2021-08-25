@@ -1,7 +1,7 @@
-PACKAGE_VERSION="5.2.0"
+PACKAGE_VERSION="6.1.0"
 PACKAGE_SRCURL="https://download.qemu.org/qemu-${PACKAGE_VERSION}.tar.xz"
-PACKAGE_SHA256="cb18d889b628fbe637672b0326789d9b0e3b8027e0445b936537c78549df17bc"
-PACKAGE_DEPENDS="glib, pixman, zlib"
+PACKAGE_SHA256="eebc089db3414bbeedf1e464beda0a7515aad30f73261abc246c9b27503a3c96"
+PACKAGE_DEPENDS="glib, libiconv, pixman, zlib"
 PACKAGE_BUILD_IN_SRC="true"
 
 builder_step_configure() {
@@ -63,7 +63,9 @@ builder_step_configure() {
 		--disable-dmg \
 		--disable-parallels \
 		--disable-qed \
-		--disable-sheepdog \
+		--disable-vhost-user \
+		--disable-vhost-user-blk-server \
+		--disable-tools \
 		--target-list=x86_64-softmmu
 }
 
