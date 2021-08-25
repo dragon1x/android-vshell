@@ -16,9 +16,19 @@ It is not affected by Android security hardening like Termux, see issue about
 
 <p align="center"><img src="./images/screenshot.gif" width="60%"/></p>
 
-Closest alternatives to this application:
+Closest alternatives:
 - [iSH]: Linux shell terminal for IOS devices. User mode emulation.
 - [UserLAnd]: Rootless Linux distribution chroot for Android OS. Uses `proot`.
+
+*[vShell] is a private project even though it is Free and Open Source. It has
+been developed specifically for my needs. Considering that Android development
+is not my occupation and neither my hobby, do not expect the great UX, elegant
+coding solutions and so on. vShell is not newbie friendly and never was
+intended to be such. If you are not skilled in Linux systems, you will not have
+much success with this application.*
+
+*Remember that I do not provide any kind of mentorship on using the packaged
+Linux distribution.*
 
 ## Where to download
 
