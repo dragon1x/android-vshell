@@ -32,9 +32,7 @@ Linux distribution.*
 
 ## Where to download
 
-You can [download] the latest version from the [GitHub Releases] page. There are
-multiple APK variants specific to each device architecture. If unsure what to
-download, use the `universal` variant.
+You can [download] the latest version from the [GitHub Releases] page.
 
 Check the [LIMITATIONS.md](./LIMITATIONS.md) to learn about functional limits
 of this software.
