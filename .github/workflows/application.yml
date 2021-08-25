@@ -5,6 +5,7 @@ on:
       - app/**
       - gradle/**
       - gradle*
+      - native-packages/packages/**
       - ./*.gradle
 
 jobs:
