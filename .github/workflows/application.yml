@@ -7,6 +7,7 @@ on:
       - gradle*
       - native-packages/packages/**
       - ./*.gradle
+  workflow_dispatch:
 
 jobs:
   gradle-wrapper-check:
