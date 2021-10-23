@@ -407,7 +407,8 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         environment.add("TMPDIR=" + appContext.getCacheDir().getAbsolutePath());
 
         // Used by QEMU internal DNS.
-        environment.add("CONFIG_QEMU_DNS=" + Config.QEMU_UPSTREAM_DNS);
+        environment.add("CONFIG_QEMU_DNS=" + Config.QEMU_UPSTREAM_DNS_V4);
+        environment.add("CONFIG_QEMU_DNS6=" + Config.QEMU_UPSTREAM_DNS_V6);
 
         // Variables present on Android 10 or higher.
         String[] androidExtra = {

@@ -45,9 +45,14 @@ public class Config {
     public static final String QEMU_DATA_PACKAGE = "qemu-runtime-data.bin";
 
     /**
-     * Upstream DNS server used by QEMU DNS resolver.
+     * Upstream name server used by QEMU DNS resolver (IPv4).
      */
-    public static final String QEMU_UPSTREAM_DNS = "1.1.1.1";
+    public static final String QEMU_UPSTREAM_DNS_V4 = "1.1.1.1";
+
+    /**
+     * Upstream name server used by QEMU DNS resolver (IPv6).
+     */
+    public static final String QEMU_UPSTREAM_DNS_V6 = "2606:4700:4700::1111";
 
     /**
      * Minimal RAM allocation in MiB which guarantees that guest OS will
