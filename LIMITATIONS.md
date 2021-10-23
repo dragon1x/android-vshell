@@ -57,8 +57,10 @@ certain cases could be lower and may depend on used software or host device.
 
 ## No access to host resources
 
-*Don't even try to root your device or dump packets from your Wi-Fi dongle.
-This is not possible with vShell.*
+*Don't even try to root your device with vShell. This is not possible.*
+
+You can't use this application for accessing your USB-OTG drives, smartcards,
+SDR, Wi-Fi or Bluetooth dongles and other hardware.
 
 I would not leave comments for those who think can elevate privileges by
 using [QEMU].
