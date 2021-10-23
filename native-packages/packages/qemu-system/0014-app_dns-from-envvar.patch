@@ -1,6 +1,6 @@
 diff -uNr qemu-6.1.0/slirp/src/slirp.c qemu-6.1.0.mod/slirp/src/slirp.c
---- qemu-6.1.0/slirp/src/slirp.c	2021-10-23 15:47:34.767990849 +0300
-+++ qemu-6.1.0.mod/slirp/src/slirp.c	2021-10-23 16:43:18.542582868 +0300
+--- qemu-6.1.0/slirp/src/slirp.c	2021-10-23 20:19:38.700663146 +0300
++++ qemu-6.1.0.mod/slirp/src/slirp.c	2021-10-23 20:59:41.510786510 +0300
 @@ -256,7 +256,6 @@
  {
      char buff[512];
@@ -52,3 +52,34 @@ diff -uNr qemu-6.1.0/slirp/src/slirp.c qemu-6.1.0.mod/slirp/src/slirp.c
      if (!found)
          return -1;
      return 0;
+@@ -318,6 +318,7 @@
+ 
+ int get_dns_addr(struct in_addr *pdns_addr)
+ {
++#if 0
+     static struct stat dns_addr_stat;
+ 
+     if (dns_addr.s_addr != 0) {
+@@ -328,12 +329,14 @@
+             return ret;
+         }
+     }
++#endif
+     return get_dns_addr_resolv_conf(AF_INET, pdns_addr, &dns_addr,
+                                     sizeof(dns_addr), NULL, &dns_addr_time);
+ }
+ 
+ int get_dns6_addr(struct in6_addr *pdns6_addr, uint32_t *scope_id)
+ {
++#if 0
+     static struct stat dns6_addr_stat;
+ 
+     if (!in6_zero(&dns6_addr)) {
+@@ -344,6 +347,7 @@
+             return ret;
+         }
+     }
++#endif
+     return get_dns_addr_resolv_conf(AF_INET6, pdns6_addr, &dns6_addr,
+                                     sizeof(dns6_addr), scope_id,
+                                     &dns6_addr_time);
