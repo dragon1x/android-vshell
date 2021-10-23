@@ -5,7 +5,7 @@ on:
       - master
     paths:
       - native-packages/scripts/**
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   update-docker-image:
