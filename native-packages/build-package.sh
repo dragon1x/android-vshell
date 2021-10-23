@@ -7,9 +7,9 @@ export PACKAGE_TARGET_ARCH="aarch64"
 export PACKAGE_INSTALL_PREFIX="/data/data/app.virtshell/files"
 
 : "${CONFIG_BUILDER_MAKE_PROCESSES:="$(nproc)"}"
-CONFIG_BUILDER_DEBUG=""
-CONFIG_BUILDER_FORCE=""
-CONFIG_BUILDER_SKIP_DEPCHECK=""
+CONFIG_BUILDER_DEBUG="false"
+CONFIG_BUILDER_FORCE="false"
+CONFIG_BUILDER_SKIP_DEPCHECK="false"
 
 BUILDER_SCRIPTDIR=$(dirname "$(realpath "$0")")
 export BUILDER_SCRIPTDIR
@@ -119,7 +119,7 @@ builder_step_post_extract_package() {
 builder_step_patch_package() {
 	local DEBUG_PATCHES=""
 
-	if [ "$CONFIG_BUILDER_DEBUG" == "true" ]; then
+	if [ "$CONFIG_BUILDER_DEBUG" = "true" ]; then
 		DEBUG_PATCHES=$(find "$PACKAGE_BUILDER_DIR" -mindepth 1 -maxdepth 1 -name "*.patch.debug")
 	fi
 
@@ -393,9 +393,18 @@ mkdir -p "$BUILDER_TOPDIR"
 
 # Handle 'all' arch:
 if [ -n "${PACKAGE_TARGET_ARCH+x}" ] && [ "${PACKAGE_TARGET_ARCH}" = 'all' ]; then
+	cmdline=("$@")
+
+	if [ "$CONFIG_BUILDER_FORCE" = "true" ]; then
+		cmdline=("-f" "${cmdline[@]}")
+	fi
+
+	if [ "$CONFIG_BUILDER_DEBUG" = "true" ]; then
+		cmdline=("-d" "${cmdline[@]}")
+	fi
+
 	for arch in 'aarch64' 'arm' 'i686' 'x86_64'; do
-		./build-package.sh ${CONFIG_BUILDER_FORCE+-f} -a $arch \
-			${CONFIG_BUILDER_DEBUG+-d} "$@"
+		./build-package.sh -a $arch "${cmdline[@]}"
 	done
 	exit
 fi
@@ -459,14 +468,14 @@ while (($# > 0)); do
 
 		source "$PACKAGE_BUILDER_SCRIPT"
 
-		if [ -z "${CONFIG_BUILDER_SKIP_DEPCHECK:=""}" ]; then
+		if [ "$CONFIG_BUILDER_SKIP_DEPCHECK" != "true" ]; then
 			while read -r dep; do
 				echo "Building dependency $dep if necessary..."
 				"$BUILDER_SCRIPTDIR/build-package.sh" -a "$PACKAGE_TARGET_ARCH" -s "$dep"
 			done < <("$BUILDER_SCRIPTDIR/scripts/buildorder.py" "$PACKAGE_BUILDER_DIR")
 		fi
 
-		if [ -z "${CONFIG_BUILDER_FORCE}" ] && [ -e "/data/data/.built-packages/$PACKAGE_NAME" ]; then
+		if [ "$CONFIG_BUILDER_FORCE" != "true" ] && [ -e "/data/data/.built-packages/$PACKAGE_NAME" ]; then
 			if [ "$(cat "/data/data/.built-packages/$PACKAGE_NAME")" = "$PACKAGE_VERSION" ]; then
 				echo "${PACKAGE_NAME}@${PACKAGE_VERSION} built - skipping"
 				exit 0
@@ -523,7 +532,7 @@ while (($# > 0)); do
 		export CPPFLAGS="-I${PACKAGE_INSTALL_PREFIX}/include -D_FORTIFY_SOURCE=2 -DAPPLICATION_RUNTIME_PREFIX=${PACKAGE_INSTALL_PREFIX}"
 		export LDFLAGS="-L${PACKAGE_INSTALL_PREFIX}/lib"
 
-		if [ -n "$CONFIG_BUILDER_DEBUG" ]; then
+		if [ "$CONFIG_BUILDER_DEBUG" = "true" ]; then
 			CFLAGS+=" -g3 -O1"
 		else
 			CFLAGS+=" -O2 -ftree-vectorize"
