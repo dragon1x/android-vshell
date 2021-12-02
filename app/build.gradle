@@ -15,8 +15,8 @@ android {
         applicationId "app.virtshell"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 20
-        versionName "1.20"
+        versionCode 21
+        versionName "1.21"
 
         archivesBaseName = "vshell-v$versionName"
 
