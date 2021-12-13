@@ -28,7 +28,11 @@ intended to be such. If you are not skilled in Linux systems, you will not have
 much success with this application.*
 
 *Remember that I do not provide any kind of mentorship on using the packaged
-Linux distribution.*
+Linux distribution.* **Read the f\*\*\*ing documentation!** See links below:
+
+* [Alpine Linux Wiki](https://wiki.alpinelinux.org/wiki/Main_Page)
+* Built-in application usage help: long click on terminal -> "Help". Unformatted
+  markdown page is available online here: [user-guide/guide.md.in](/user-guide/guide.md.in).
 
 ## Where to download
 
@@ -102,25 +106,13 @@ nameserver 10.0.2.3
 Ports 22 and 80 are forwarded to random ports on host. Long tap on terminal
 screen to see the current port forwardings in context menu.
 
-## Issues and feature requests
+## Known Issues
 
-Issues: https://github.com/xeffyr/android-vshell/issues
-
-When submitting a request for missing feature, please ensure that it is not
-covered by "Limitations" section of this README. I would not implement support
-things like KVM, TUN/TAP, custom operating system, multiple console sessions.
-Modifications of system configuration will be considered only for important
-reasons.
-
-Since [Alpine Linux] project is a third-party project, operating system issues
-should be reported to its developers. I would not fix them.
-
-Bundled application user guide can be accessed through "Show help" button in
-the context menu (long tap \-\-\> more \-\-\> Show help). However it does not
-cover usage of Alpine Linux. If you are seeking for such information, it is
-better to visit https://wiki.alpinelinux.org/wiki/Main_Page.
-
-**Don't ask me for mentorship.**
+For now there is only one major issue which doesn't happen under normal cases.
+It is related to host storage mount point exported through VirtFS and leads
+to application force-close when you are trying to list current working directory
+that is already deleted on host. I can't provide fix for that and this seem
+to be a general QEMU issue.
 
 ## Resources
 
